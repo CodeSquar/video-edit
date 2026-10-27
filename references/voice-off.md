@@ -43,11 +43,10 @@ Gemini returns only `pcm` (16-bit mono, 24 kHz). Wrap it: `ffmpeg -y -f s16le -a
 2. Scene `data-duration` = take + 0.4–0.8 s of air (more before a payoff). Trim words, never stretch motion to fill.
 3. One `<audio>` per take in the root, `data-start` = its scene start (+0.2 s lead-in):
    `<audio id="vo-s1" class="clip" src="assets/voice/s1.wav" data-start="0.2" data-volume="1"></audio>`
-4. Reveals and captions on the spoken words: `npx hyperframes transcribe assets/voice/s1.wav --model small --language <code> --json` (English: `--model small.en`). Real word times replace guesses.
-5. Music under the voice ≈ 0.14 volume; mix with `npx hyperframes normalize-audio`.
+4. Music under the voice ≈ 0.14 volume; mix with `npx hyperframes normalize-audio`.
 
 ## Check
 
-- Transcribe each take and compare with the script: names, numbers, nothing missing, no spoken directions. Wrong read → change the text (spell it out) and regenerate that line only.
+- Each take's duration ≈ its words ÷ 2.3 s. Far off → a wrong read or spoken directions: change the text (spell it out) and regenerate that line only.
 - Every scripted scene has its take; root `data-duration` covers the last take plus its air.
 - You can measure the audio (`npx hyperframes audio out.mp4 --json`), not hear it — say so.
