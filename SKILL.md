@@ -137,3 +137,4 @@ Be a harsh motion director, not a proud author.
 | --- | --- |
 | Writing HTML: skeleton, attributes, variables, fonts, media, lint fixes, other runtimes (canvas/Three/Lottie) | `references/format.md` |
 | Storylines, beats per film type, transitions catalog, captions, cards over footage, music timing, data/explainer/vertical/launch specifics | `references/craft.md` |
+| Voiceover: script, generating takes (OpenRouter TTS), timing scenes to the voice | `references/voice-off.md` |
