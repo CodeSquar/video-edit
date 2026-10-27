@@ -49,4 +49,4 @@ Gemini returns only `pcm` (16-bit mono, 24 kHz). Wrap it: `ffmpeg -y -f s16le -a
 
 - Each take's duration ≈ its words ÷ 2.3 s. Far off → a wrong read or spoken directions: change the text (spell it out) and regenerate that line only.
 - Every scripted scene has its take; root `data-duration` covers the last take plus its air.
-- You can measure the audio (`npx hyperframes audio out.mp4 --json`), not hear it — say so.
+- You can measure the audio (`npx hyperframes audio renders/<name>.mp4 --json`), not hear it — say so.

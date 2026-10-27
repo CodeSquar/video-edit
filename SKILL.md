@@ -16,6 +16,7 @@ index.html            root: declares variables, mounts one host per scene
 compositions/*.html   one scene each, everything inside <template>
 assets/               media, fonts (assets/fonts/*.woff2), root-relative paths
 SPEC.md               your brief
+renders/              every render output (mp4), never elsewhere
 ```
 
 Preview and render use these same files: write in this format from the start, view with `npx hyperframes preview`. Never write your own player or a separate preview HTML.
@@ -44,7 +45,7 @@ New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init <dir>` (without it,
 5. **Check**: `HYPERFRAMES_NO_UPDATE_CHECK=1 npx hyperframes check 2>/dev/null` (PowerShell: `2>$null`). Never `--json`; stderr is only progress lines. Non-zero exit = failed. Fix every error, weigh every warning (`line_unread`, `dead_stretch`, `text_below_floor`, `first_frame_empty`, `film_silent`).
 6. **Look** (new films only; skip for small edits or if the person says no review): `npx hyperframes snapshot --review` (scene starts/mids, every cut ±0.2 s, phone width). For one move: `snapshot --range A,B --frames 8`, `--at t1,t2`, `keyframes --json --selector '#id'`. Read the PNGs — that is how you see the video. Then run the **Review** below.
 7. **Preview**: `npx hyperframes preview --background`; give the URL and wait for approval, unless they asked for the file.
-8. **Render**: `npx hyperframes render --quality delivery --output out.mp4` (`draft` while iterating). Confirm `ffprobe` duration = root `data-duration`; look at decoded frames. Sound: `npx hyperframes audio out.mp4 --json` (you can measure it, not hear it — say so).
+8. **Render**: `npx hyperframes render --quality delivery --output renders/<name>.mp4` (`draft` while iterating), always into the project's `renders/`. Confirm `ffprobe` duration = root `data-duration`; look at decoded frames. Sound: `npx hyperframes audio renders/<name>.mp4 --json` (you can measure it, not hear it — say so).
 
 Timeline edits without hand-editing: `npx hyperframes timeline move|trim|split|set|duplicate|delete <#ref> … --plan --json`, then without `--plan`.
 
