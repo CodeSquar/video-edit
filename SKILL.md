@@ -7,7 +7,7 @@ description: Make, edit, animate or render a video as HTML compositions rendered
 
 A video is HTML + CSS + one paused GSAP timeline. The HyperFrames CLI seeks that timeline frame by frame and encodes it, so every render is identical. Run it as `npx hyperframes <cmd>` (Node 22+, FFmpeg; `npx hyperframes doctor` if Chrome is missing). Failures print a `Fix:` line. Don't read `--help` or `npx hyperframes docs` unless a command fails: the commands here are enough. From command output take only the result and `Fix:` lines; ignore init's "Get started", update notices, skill suggestions and `Report:` JSON paths.
 
-Defaults: 1920×1080, 30 fps. Build only what was asked: no voiceover, captions or new aspect ratio unless requested (images are the exception, see Project). A question or a loose idea gets an answer or a proposal, not an edit.
+Defaults: 1920×1080, 30 fps. Build only what was asked: no voiceover, captions or new aspect ratio unless requested (images and sound effects are the exception, see Project). A question or a loose idea gets an answer or a proposal, not an edit.
 
 ## Project
 
@@ -21,7 +21,7 @@ video/
   films/<name>/           one HyperFrames project per film:
     index.html            the whole film, written in one pass: variables, scenes, one timeline
     compositions/*.html   copies of the components this film uses (render reads only inside the project)
-    assets/               media, fonts (assets/fonts/*.woff2), root-relative paths
+    assets/               media, fonts (assets/fonts/*.woff2), sfx (assets/sfx/), root-relative paths
     SPEC.md               your brief
     renders/              every render output (mp4), never elsewhere
 ```
@@ -33,6 +33,8 @@ Other films are off-limits: never list, open, snapshot, play or copy anything in
 New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init video/films/<name> && rm -f video/films/<name>/CLAUDE.md video/films/<name>/AGENTS.md` (the env var stops init installing the upstream skills; the `rm` drops the files that point to them). A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`), output into `video/refs/`. Code shapes, attributes and lint fixes: `references/format.md`.
 
 Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names; otherwise search with `ddgs` (`pip install ddgs`; `DDGS().images(query, max_results=10, size="Large")`; some downloads fail, keep the ones that land). Filter by the result data first (size, source), then look only at the ones you pick: no watermarks, edited variants or low resolution. Copy only the ones you use into `assets/img/`. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
+
+Sound effects: every film has them, music or not, unless the person says no. Take them from this skill's `assets/sfx/`: `manifest.json` gives each file's duration and description (whoosh, pop, click, impact, riser, glitch, typing…). Copy only the ones you use into the film's `assets/sfx/`. Each effect syncs exactly to its on-screen action, as its `description` says. Short accents (click, key-press, pop, whoosh) sit on the action's frame. Hits (impact, glitch) trigger on the landing and their decay bleeds into the next shot (J-cut). Builds (riser, whoosh-cinematic, impact-bass-2) are placed so the peak lands on the reveal or cut: start = peak − duration (riser: payoff − 10.03 s). Durations come from the manifest, so timing is known before anything plays. One file per distinct effect, reused for every cue that needs it. One `<audio>` per cue, all in one `sfx` group: `<audio id="sfx-pop-1" class="clip" src="assets/sfx/pop.mp3" data-start="2.43" data-volume="0.35" data-audio-group="sfx"></audio>`. Volume ≈ 0.35, under narration and music. No file fits a cue: skip it, never generate one.
 
 ## Contract (`check` enforces most of it)
 
@@ -115,7 +117,7 @@ QA:      frames to check and what each must show
 - The brand mark lands once, with weight, on a built end card — never docked in a corner.
 - Copy bans: "Introducing" as the first line, "unlock", "seamless", "supercharge", "game-changer", "revolutionize", "effortless", unmeasured "in seconds".
 
-**Sound:** a film over ~15 s gets a music bed and few, exact effects on visible actions (click on a real click, whoosh on a cut, pop on a landing, one riser into the payoff), each peaking one frame after its picture, rotated takes. Mix ≈ −14 to −16 LUFS, peaks ≤ −1 dBTP (`npx hyperframes normalize-audio`). No music source → deliver silent and say so.
+**Sound:** every film gets exact effects on visible actions (see Project); a film over ~15 s also gets a music bed. Mix ≈ −14 to −16 LUFS, peaks ≤ −1 dBTP (`npx hyperframes normalize-audio`). No music source → deliver with effects only and say so.
 
 ## BANNED by default
 
