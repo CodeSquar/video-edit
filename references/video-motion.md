@@ -11,13 +11,18 @@ Escribe `video/motion.md`: cómo se mueve el video. No define colores, fuentes n
 
 Referencias que pase el usuario: videos (preferido) y/o frames.
 
-- No preguntes nada. Trabajá solo con lo que hay.
+- Preguntá poco: una sola ronda al inicio, máximo 3 preguntas, solo lo que no se puede medir y cambia el archivo. Timing, easing y cortes se miden, no se preguntan.
+  - Sin referencias: pedí 1–3 videos (no frames).
+  - Referencias con estilos distintos: preguntá cuál manda.
+  - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
+  - Si también falta `video/design.md`, una sola ronda para los dos.
+  - Nunca preguntes lo que ya dicen DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay y marcá `(default)`.
 - **Video**: el motion se mide, no se adivina.
   - fps y duración: `ffprobe`.
   - Cortes: `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep pts_time` → duración media de plano.
   - Frames: `ffmpeg -i ref.mp4 -vf fps=4 f/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
 - **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver lleva un default marcado `(default)`.
-- Referencias con estilos distintos: tomá el dominante, no mezcles.
+- Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/motion.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir

@@ -11,12 +11,18 @@ Escribe `video/design.md`: cómo se ve cada frame. No define tiempos, easing, tr
 
 Referencias que pase el usuario: videos y/o frames.
 
-- No preguntes nada. Trabajá solo con lo que hay.
+- Preguntá poco: una sola ronda al inicio, máximo 3 preguntas, solo lo que no se puede medir y cambia el archivo. Colores, tamaños y márgenes se miden, no se preguntan.
+  - Sin referencias: pedí 1–3 videos o frames.
+  - Fuente o logo de marca que no se puede identificar o no está en `assets/fonts/`: pedí los archivos. Sin ellos, usá una parecida y anotalo.
+  - Referencias con estilos distintos: preguntá cuál manda.
+  - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
+  - Si también falta `video/motion.md`, una sola ronda para los dos.
+  - Nunca preguntes lo que ya dicen el DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay y marcá `(default)`.
 - **Video**: sacá frames representativos con `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)'" -vsync vfr f/%03d.jpg` (uno por plano) y miralos.
 - **Colores**: medilos, no los adivines. `python3 -c "from PIL import Image;im=Image.open('f.jpg').convert('RGB').quantize(8);p=im.getpalette();print(['#%02x%02x%02x'%tuple(p[i*3:i*3+3]) for _,i in sorted(im.getcolors(),reverse=True)])"`
 - **DESIGN.md de raíz** (web): si existe, heredá marca (colores, fuentes) referenciando sus tokens por nombre. No copies valores. Las referencias de video mandan en todo lo demás.
 - Lo que no se pueda deducir lleva un default marcado `(default)`.
-- Referencias con estilos distintos: tomá el dominante, no mezcles.
+- Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/design.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
