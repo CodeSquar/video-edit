@@ -13,8 +13,9 @@ one tempo for the whole film (auto: speeds up a slow read toward 2.4 words/s, ma
 one transcription pass over all takes joined -> assets/voice/timings.json + a table:
 take length, words/s, word starts, and a suggested scene start/duration.
 Existing wavs are reused unless --force or listed in --only (re-generate just those).
+A new --tempo re-times the existing wavs too (by the step from the stored tempo), nothing re-requested.
 """
-import argparse, concurrent.futures as cf, json, os, shutil, subprocess, sys, tempfile, wave
+import argparse, concurrent.futures as cf, json, os, shutil, subprocess, sys, tempfile, time, wave
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 URL = "https://openrouter.ai/api/v1/audio/speech"
@@ -41,13 +42,18 @@ def tts(text, args, pcm):
         f.write("Authorization: Bearer " + os.environ["OPENROUTER_API_KEY"] + "\nContent-Type: application/json\n")
     last = ""
     try:
-        for _ in range(2):  # one retry for a network hiccup
+        for attempt in range(4):
             r = run(["curl", "-sS", "-m", "120", "-o", pcm, "-w", "%{http_code}", "-H", "@" + hdr,
                      "--data-binary", "@" + body, URL])
-            head = open(pcm, "rb").read(300) if os.path.exists(pcm) else b""
-            if r.stdout.strip() == "200" and head[:1] != b"{":
+            code, head = r.stdout.strip(), open(pcm, "rb").read(300) if os.path.exists(pcm) else b""
+            if code == "200" and head[:1] != b"{":
                 return
-            last = f"HTTP {r.stdout.strip()} {r.stderr.strip()} {head.decode('utf-8', 'replace')}"
+            last = f"HTTP {code} {r.stderr.strip()} {head.decode('utf-8', 'replace')}"
+            if code == "402" and b"in-flight" in head:
+                # OpenRouter holds credit for every request in flight; it frees as the other takes land
+                time.sleep(3 * (attempt + 1))
+            elif attempt:  # one retry for a network hiccup
+                break
         raise RuntimeError(last)
     finally:
         for p in (body, hdr):
@@ -148,12 +154,12 @@ def main():
         wps = total_w / total_d
         tempo = round(min(1.2, 2.4 / wps), 2) if wps < 2.2 else 1.0
     film_tempo = tempo
-    if not todo:
-        tempo = 1.0
-    if tempo != 1.0:
-        for s, _ in todo:
+    new = {s for s, _ in todo}
+    for s in ids:  # new takes are raw; existing ones are already at the stored tempo
+        step = tempo if s in new else tempo / (prev or 1.0)
+        if abs(step - 1) > 0.005:
             p = os.path.join(args.out, s + ".wav")
-            run(["ffmpeg", "-loglevel", "error", "-y", "-i", p, "-af", f"atempo={tempo}", p + ".t.wav"])
+            run(["ffmpeg", "-loglevel", "error", "-y", "-i", p, "-af", f"atempo={step:.4f}", p + ".t.wav"])
             os.replace(p + ".t.wav", p)
 
     words = transcribe(ids, args.out)
@@ -162,8 +168,9 @@ def main():
     for s in ids:
         d = round(dur(os.path.join(args.out, s + ".wav")), 2)
         scene = round(args.lead + d + args.air, 2)
+        digits = any(c.isdigit() for w in words[s] for c in w["text"])  # "1994" for five spoken words
         flag = "  <- word count off: wrong read? spell it out and --only " + s \
-            if words[s] and abs(len(words[s]) - nwords[s]) > max(2, 0.25 * nwords[s]) else ""
+            if words[s] and not digits and abs(len(words[s]) - nwords[s]) > max(2, 0.25 * nwords[s]) else ""
         timings[s] = {"file": f"{args.out}/{s}.wav", "duration": d, "words": words[s],
                       "scene_start": round(t, 2), "scene_duration": scene, "vo_start": round(t + args.lead, 2)}
         print(f"{s:5} take {d:5.2f}s {nwords[s] / d:4.1f} w/s | start {t:6.2f} dur {scene:5.2f} vo {t + args.lead:6.2f}{flag}")

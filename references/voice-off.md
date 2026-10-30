@@ -39,6 +39,8 @@ python <skill>/scripts/voice.py voice.txt --instructions "Warm, clear, unhurried
 
 Delivery goes in `--instructions`, written for the film's language and accent (e.g. "Español rioplatense, con voseo, cálido…"), never in the text. The script requests every take in parallel (Gemini returns 24 kHz pcm; it wraps it to `assets/voice/<id>.wav`), trims the silence at both ends, applies **one tempo to the whole film** (`--tempo auto`: a read slower than 2.2 words/s is sped up toward 2.4, at most 1.2×; or a fixed `--tempo 1.1`), transcribes every take in one pass and writes `assets/voice/timings.json`. It prints per take: length, words/s, each word's start, and a suggested `scene_start` / `scene_duration` (take + `--lead 0.2` + `--air 0.6`) / `vo_start`, back to back. Use those numbers; give a payoff more air by shifting the later scenes, never stretch motion to fill.
 
+Voice longer or shorter than the script's timing: run again with `--tempo 1.1` (keep it within 0.9–1.25). The takes already made are re-timed to it and the timings rebuilt; nothing is re-requested, no `ffmpeg` by hand. A `402 … in-flight` from OpenRouter means it is holding credit for the takes still in flight, not that the balance ran out; the script waits and retries those on its own.
+
 Fix one line: edit it in `voice.txt` and run again with `--only s3`. Only that take is regenerated, at the film's tempo, and the timings are rebuilt. Existing takes are never re-requested without `--only` or `--force`.
 
 Another model that returns mp3 (e.g. MiniMax) is not covered by the script: call the endpoint with `curl` and `"response_format":"mp3"` for that case only.
@@ -50,6 +52,6 @@ One `<audio>` per take in the root, `data-start` = its `vo_start`:
 
 ## Check
 
-- The script marks a take whose transcribed word count is far from its line (`<- word count off`): a wrong read or spoken directions. Spell it out and rerun with `--only <id>`. Transcripts write numbers as digits ("85" for "eighty-five"); that alone is not a wrong read.
+- The script marks a take whose transcribed word count is far from its line (`<- word count off`): a wrong read or spoken directions. Spell it out and rerun with `--only <id>`. Takes whose transcript has digits ("1994" for five spoken words) are not flagged.
 - Every scripted scene has its take; root `data-duration` covers the last take plus its air.
 - You can measure the audio (SKILL.md, Render), not hear it — say so.

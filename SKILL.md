@@ -11,7 +11,7 @@ Bundled scripts do the mechanical work; use them instead of writing your own loo
 
 | Script | Does, in one call |
 | --- | --- |
-| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json` + scene starts (`references/voice-off.md`) |
+| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json` + scene starts (`references/voice-off.md`); to fit the script's length, rerun with `--tempo 1.1`: it re-times the takes already made |
 | `<skill>/scripts/images.py search` / `get` / `cut` | image search as one line per hit, parallel download that rejects HTML pages, crop → webp |
 | `<skill>/scripts/fonts.py "Family:700" "Family:italic:500"` | Google Fonts → `assets/fonts/*.woff2` + the `@font-face` lines to paste |
 | `<skill>/scripts/check.py` | `check` showing only what needs a decision (Work loop 5) |
