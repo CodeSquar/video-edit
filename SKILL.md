@@ -45,7 +45,7 @@ Images and b-roll: always use them without asking, unless the person or the proj
 7. Paint order is `z-index`, not `data-track-index`.
 8. Grades/grain/blur on footage: `npx hyperframes media-treatment`, not CSS filters.
 9. Copy, colours and swappable media are variables (`data-var-text`, `data-var-src`, `var(--id)`), so the video can be re-branded without code.
-10. Content in the 90% action-safe box; text and captions in the 80% title-safe box.
+10. Content in the 90% action-safe box; text and captions in the 80% title-safe box. Vertical 9:16 for Reels/TikTok: the platform safe box in `references/craft.md` (Vertical) instead.
 
 ## Work loop
 
