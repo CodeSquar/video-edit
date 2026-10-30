@@ -17,16 +17,28 @@ Only if a command fails and this file doesn't explain it: `npx hyperframes docs 
   <div id="root" data-composition-id="main" data-start="0" data-duration="12"
        data-width="1920" data-height="1080">
     <div id="ground" style="position:absolute;inset:0;background:var(--color-ground)"></div>
-    <div id="intro" data-composition-id="intro" data-composition-src="compositions/intro.html"
-         data-start="0" data-duration="4" data-track-index="1" data-track-kind="graphics"
-         data-width="1920" data-height="1080"></div>
+    <!-- one <section> per scene, all in this file -->
+    <section id="intro" class="clip scene" data-start="0" data-duration="4" data-track-index="1">
+      <h1 id="intro-title" data-var-text="headline">…</h1>
+    </section>
+    <section id="demo" class="clip scene" data-start="4" data-duration="8" data-track-index="1">…</section>
     <audio id="bgm" class="clip" src="assets/bgm.mp3" data-start="0" data-duration="12"
            data-volume="0.6" data-fade-in="0.4" data-fade-out="1.5"></audio>
   </div>
-  <script>window.__timelines["main"] = gsap.timeline({ paused: true });</script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#intro-title",
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 0.4);
+    // every scene's tweens here, at absolute seconds
+    window.__timelines["main"] = tl;   // last line, after every tween
+  </script>
 </body>
 </html>
 ```
+
+- `.scene { position:absolute; inset:0 }`. Prefix ids per scene (`#intro-title`).
+- Only for a piece reused across films (a character, a product, a logo): its source lives in `video/components/`; copy it into the film's `compositions/` and mount it with a host `<div data-composition-id="…" data-composition-src="compositions/x.html" data-track-kind="graphics" …>`:
 
 ```html
 <!-- compositions/intro.html — styles, markup and script ALL inside <template> -->
@@ -48,8 +60,7 @@ Only if a command fails and this file doesn't explain it: `npx hyperframes docs 
 </template>
 ```
 
-- Host id = scene root `data-composition-id` = timeline key, or each render waits 45 s per scene and shows static frames.
-- Scene root sized with `inset: 0`, styled as `#root` (not a class). Prefix ids per scene (`#intro-title`); a scene's timeline can't reach outside its file.
+- For such a file: host id = its root `data-composition-id` = timeline key, or each render waits 45 s and shows static frames. Root sized with `inset: 0`, styled as `#root` (not a class); its timeline can't reach outside its file.
 - A fill on the composition root is dropped with shader transitions/HDR: put the ground on a full-bleed child (as above). An untimed full-bleed child needs `position:absolute; inset:0`.
 - Place tweens at absolute seconds (`tl.to(el, {...}, 2.4)`). Measure layout once before building tweens, never in `onUpdate`. Transforms on a `<span>` need `display:inline-block`. Finite repeats only: `repeat: Math.max(0, Math.floor(dur / cycle) - 1)`.
 - Async build (e.g. `document.fonts.ready.then(...)`) is fine if you register the timeline at the end of the callback.
@@ -61,7 +72,7 @@ Only if a command fails and this file doesn't explain it: `npx hyperframes docs 
 | `data-start`, `data-duration` | Seconds, local to the declaring file. `data-start="intro + 0.5"` = after `intro` ends (typos silently resolve to 0 — snapshot it) |
 | `data-track-index` | Studio lane only; paint order is `z-index` |
 | `data-track-kind` | `graphics` on scene/overlay hosts; `captions` on the one host holding all caption groups |
-| `data-composition-src`, `data-variable-values` | Mount a scene file; per-mount variable values (JSON object) |
+| `data-composition-src`, `data-variable-values` | Mount a reused piece; per-mount variable values (JSON object) |
 | `data-media-start` | Trim offset into the source media |
 | `data-playback-rate` | Constant speed 0.1–10 (pitch preserved). Ramps: a `rate` lane in `data-automation` |
 | `data-has-audio="true"` / `muted` | One of them on every timed `<video>` |
@@ -120,8 +131,8 @@ Simulations: simulate once at load into arrays, look up state at `t`. Heavy setu
 | `video_nested_in_timed_element` | Time the video or its wrapper, not both |
 | `media_missing_id`, `media_crossorigin_breaks_preview` | `id` on every `<audio>`; drop `crossorigin` |
 | `gsap_timeline_registered_before_async_build` | Register at the end of the async callback |
-| `standalone_composition_wrapped_in_template` | Only scene files use `<template>` |
-| `subcomposition_root_styled_by_class` | Style the scene root as `#root` |
+| `standalone_composition_wrapped_in_template` | Only reused piece files use `<template>` |
+| `subcomposition_root_styled_by_class` | Style the piece root as `#root` |
 | `clip_ends_past_root_duration` | Raise root `data-duration` |
 | `sweep_static` / `missing_data_no_timeline` | Spread the motion, or mark a still composition `data-no-timeline` |
 

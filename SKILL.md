@@ -5,7 +5,7 @@ description: Make, edit, animate or render a video as HTML compositions rendered
 
 # Video Edit
 
-A video is HTML + CSS + one paused GSAP timeline per scene. The HyperFrames CLI seeks that timeline frame by frame and encodes it, so every render is identical. Run it as `npx hyperframes <cmd>` (Node 22+, FFmpeg; `npx hyperframes doctor` if Chrome is missing). Failures print a `Fix:` line. Don't read `--help` or `npx hyperframes docs` unless a command fails: the commands here are enough.
+A video is HTML + CSS + one paused GSAP timeline. The HyperFrames CLI seeks that timeline frame by frame and encodes it, so every render is identical. Run it as `npx hyperframes <cmd>` (Node 22+, FFmpeg; `npx hyperframes doctor` if Chrome is missing). Failures print a `Fix:` line. Don't read `--help` or `npx hyperframes docs` unless a command fails: the commands here are enough. From command output take only the result and `Fix:` lines; ignore init's "Get started", update notices, skill suggestions and `Report:` JSON paths.
 
 Defaults: 1920×1080, 30 fps. Build only what was asked: no voiceover, captions or new aspect ratio unless requested (images are the exception, see Project). A question or a loose idea gets an answer or a proposal, not an edit.
 
@@ -17,9 +17,10 @@ Everything lives under one `video/` folder at the repo root:
 video/
   motion.md, design.md    shared style for every film
   refs/                   references, extracted frames, capture output
+  components/*.html       pieces reused across films (character, product, logo)
   films/<name>/           one HyperFrames project per film:
-    index.html            root: declares variables, mounts one host per scene
-    compositions/*.html   one scene each, everything inside <template>
+    index.html            the whole film, written in one pass: variables, scenes, one timeline
+    compositions/*.html   copies of the components this film uses (render reads only inside the project)
     assets/               media, fonts (assets/fonts/*.woff2), root-relative paths
     SPEC.md               your brief
     renders/              every render output (mp4), never elsewhere
@@ -35,7 +36,7 @@ Images and b-roll: always use them without asking, unless the person or the proj
 
 1. Timed elements: `class="clip"`, `id`, `data-start`, `data-duration` (seconds), visible over `[start, start+duration)` — land the end state *before* the end.
 2. Video length = root `data-duration`. Overrun is cut; an early end holds the last frame.
-3. One `gsap.timeline({ paused: true })` per composition, registered **last**: `window.__timelines["<composition-id>"] = tl`. Host id = scene root id = timeline key. Never `play()`, never nest a scene's timeline in the root's.
+3. One `gsap.timeline({ paused: true })` per file (`index.html`, plus each reused piece), registered **last**: `window.__timelines["<composition-id>"] = tl`. A piece's host id = its root id = timeline key. Never `play()`, never nest a piece's timeline in the root's.
 4. Deterministic: no `Date.now()`, unseeded `Math.random()` (use a seeded PRNG), fetches, timers, rAF, or `repeat: -1`. Everything visible is a function of timeline time.
 5. Never tween `display`/`visibility`/`autoAlpha` on a `.clip` — animate a child. No CSS `transform` on something GSAP transforms; use `fromTo`, not `from`. Animate transforms, not `left/top/width/height`.
 6. Never play/pause/seek media. `<video>` is `muted` or `data-has-audio="true"`; every `<audio>` has an `id`; no `crossorigin`.
@@ -46,14 +47,14 @@ Images and b-roll: always use them without asking, unless the person or the proj
 
 ## Work loop
 
-1. **Existing project?** `npx hyperframes timeline --json` shows what plays when. Build on what is there.
-2. **Story** (anything over ~15 s that tells something): write **three storylines** in words only — each a different world, device and form (`references/craft.md` §Story). Recommend one first. If the person is there, stop until they pick; if they said "no stops", build your pick.
-3. **Spec** (new films over ~15 s; skip for edits and short pieces): write `SPEC.md` — every adjective turned into a number (template below). Build from it, check against it.
-4. **Build**: write the whole first pass, then fix with `lint`/`check`. Don't plan every coordinate up front.
-5. **Check**: `HYPERFRAMES_NO_UPDATE_CHECK=1 npx hyperframes check 2>/dev/null` (PowerShell: `2>$null`). Never `--json`; stderr is only progress lines. Non-zero exit = failed. Fix every error, weigh every warning (`line_unread`, `dead_stretch`, `text_below_floor`, `first_frame_empty`, `film_silent`).
-6. **Look** (new films only; skip for small edits or if the person says no review): `npx hyperframes snapshot --review` (scene starts/mids, every cut ±0.2 s, phone width). For one move: `snapshot --range A,B --frames 8`, `--at t1,t2`, `keyframes --json --selector '#id'`. Read the PNGs — that is how you see the video. Then run the **Review** below.
+1. **Existing project?** `npx hyperframes timeline --json` shows what plays when (only here, never for a new film). Build on what is there.
+2. **Story** (anything over ~30 s that tells something): write **three storylines** in words only — each a different world, device and form (`references/craft.md` §Story). Recommend one first. If the person is there, stop until they pick; if they said "no stops", build your pick.
+3. **Spec** (new films over ~30 s; skip for edits and short pieces): write `SPEC.md` — every adjective turned into a number (template below). Build from it, check against it.
+4. **Build**: write the whole first pass in `index.html`, then fix with `check` (it runs lint; no separate `lint`). Don't plan every coordinate up front. Repeated elements are a JS function or CSS class in the same file, not new files.
+5. **Check**: `HYPERFRAMES_NO_UPDATE_CHECK=1 npx hyperframes check 2>/dev/null` (PowerShell: `2>$null`). Never `--json`; stderr is only progress lines. Non-zero exit = failed. Fix every error, weigh every warning (`line_unread`, `dead_stretch`, `text_below_floor`, `first_frame_empty`, `film_silent`). Ignore `nested_structure_needs_subcomposition`: scenes in one file are on purpose.
+6. **Look** (new films only; skip for small edits or if the person says no review): `npx hyperframes snapshot --review` (scene starts/mids, every cut ±0.2 s, phone width). For one move: `snapshot --range A,B --frames 8`, `--at t1,t2`, `keyframes --json --selector '#id'`. Read the contact sheets `review-beats.jpg` and `review-phone.jpg` — that is how you see the video; open a single PNG only to inspect a seam or detail. Then run the **Review** below.
 7. **Preview**: `npx hyperframes preview --background`; give the URL and wait for approval, unless they asked for the file.
-8. **Render**: `npx hyperframes render --quality delivery --output renders/<name>.mp4` (`draft` while iterating), always into the project's `renders/`. Confirm `ffprobe` duration = root `data-duration`; look at decoded frames. Sound: `npx hyperframes audio renders/<name>.mp4 --json` (you can measure it, not hear it — say so).
+8. **Render**: `npx hyperframes render --quality delivery --output renders/<name>.mp4` (`draft` while iterating), always into the project's `renders/`; pipe it through `| tail -4`, the progress lines are noise. Confirm `ffprobe` duration = root `data-duration`; look at decoded frames. Sound: `npx hyperframes audio renders/<name>.mp4 --json` (you can measure it, not hear it — say so).
 
 Timeline edits without hand-editing: `npx hyperframes timeline move|trim|split|set|duplicate|delete <#ref> … --plan --json`, then without `--plan`.
 
