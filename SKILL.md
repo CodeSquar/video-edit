@@ -7,7 +7,7 @@ description: Make, edit, animate or render a video as HTML compositions rendered
 
 A video is HTML + CSS + one paused GSAP timeline per scene. The HyperFrames CLI seeks that timeline frame by frame and encodes it, so every render is identical. Run it as `npx hyperframes <cmd>` (Node 22+, FFmpeg; `npx hyperframes doctor` if Chrome is missing). Failures print a `Fix:` line. Don't read `--help` or `npx hyperframes docs` unless a command fails: the commands here are enough.
 
-Defaults: 1920×1080, 30 fps. Build only what was asked: no voiceover, captions or new aspect ratio unless requested. A question or a loose idea gets an answer or a proposal, not an edit.
+Defaults: 1920×1080, 30 fps. Build only what was asked: no voiceover, captions or new aspect ratio unless requested (images are the exception, see Project). A question or a loose idea gets an answer or a proposal, not an edit.
 
 ## Project
 
@@ -22,6 +22,8 @@ renders/              every render output (mp4), never elsewhere
 Preview and render use these same files: write in this format from the start, view with `npx hyperframes preview`. Never write your own player or a separate preview HTML.
 
 New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init <dir>` (without it, init installs the full upstream skills). A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`). Code shapes, attributes and lint fixes: `references/format.md`.
+
+Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names; otherwise search with `ddgs` (`pip install ddgs`; `DDGS().images(query, max_results=10, size="Large")`; some downloads fail, keep the ones that land). Filter by the result data first (size, source), then look only at the ones you pick: no watermarks, edited variants or low resolution. Copy only the ones you use into `assets/img/`. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
 
 ## Contract (`check` enforces most of it)
 
