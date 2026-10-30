@@ -139,3 +139,4 @@ Be a harsh motion director, not a proud author.
 | Writing HTML: skeleton, attributes, variables, fonts, media, lint fixes, other runtimes (canvas/Three/Lottie) | `references/format.md` |
 | Storylines, beats per film type, transitions catalog, captions, cards over footage, music timing, data/explainer/vertical/launch specifics | `references/craft.md` |
 | Voiceover: script, generating takes (OpenRouter TTS), timing scenes to the voice | `references/voice-off.md` |
+| `video/motion.md` (how the project's videos move) or `video/design.md` (how each frame looks) is missing, or the person asks to rewrite/change it. Otherwise just read the existing files and follow them | `references/video-motion.md` / `references/video-design.md` |
