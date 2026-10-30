@@ -11,17 +11,23 @@ Defaults: 1920×1080, 30 fps. Build only what was asked: no voiceover, captions 
 
 ## Project
 
+Everything lives under one `video/` folder at the repo root:
+
 ```
-index.html            root: declares variables, mounts one host per scene
-compositions/*.html   one scene each, everything inside <template>
-assets/               media, fonts (assets/fonts/*.woff2), root-relative paths
-SPEC.md               your brief
-renders/              every render output (mp4), never elsewhere
+video/
+  motion.md, design.md    shared style for every film
+  refs/                   references, extracted frames, capture output
+  films/<name>/           one HyperFrames project per film:
+    index.html            root: declares variables, mounts one host per scene
+    compositions/*.html   one scene each, everything inside <template>
+    assets/               media, fonts (assets/fonts/*.woff2), root-relative paths
+    SPEC.md               your brief
+    renders/              every render output (mp4), never elsewhere
 ```
 
 Preview and render use these same files: write in this format from the start, view with `npx hyperframes preview`. Never write your own player or a separate preview HTML.
 
-New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init <dir>` (without it, init installs the full upstream skills). A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`). Code shapes, attributes and lint fixes: `references/format.md`.
+New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init video/films/<name>` (without it, init installs the full upstream skills). A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`), output into `video/refs/`. Code shapes, attributes and lint fixes: `references/format.md`.
 
 Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names; otherwise search with `ddgs` (`pip install ddgs`; `DDGS().images(query, max_results=10, size="Large")`; some downloads fail, keep the ones that land). Filter by the result data first (size, source), then look only at the ones you pick: no watermarks, edited variants or low resolution. Copy only the ones you use into `assets/img/`. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
 

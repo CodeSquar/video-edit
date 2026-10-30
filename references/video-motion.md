@@ -20,7 +20,7 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
 - **Video**: el motion se mide, no se adivina.
   - fps y duración: `ffprobe`.
   - Cortes: `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep pts_time` → duración media de plano.
-  - Frames: `ffmpeg -i ref.mp4 -vf fps=4 f/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
+  - Frames: `ffmpeg -i ref.mp4 -vf fps=4 video/refs/frames/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
 - **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/motion.md` existe, actualizalo y conservá lo que las referencias no contradigan.
