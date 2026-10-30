@@ -7,6 +7,17 @@ description: Make, edit, animate or render a video as HTML compositions rendered
 
 A video is HTML + CSS + one paused GSAP timeline. The HyperFrames CLI seeks that timeline frame by frame and encodes it, so every render is identical. Run it as `npx hyperframes <cmd>` (Node 22+, FFmpeg; `npx hyperframes doctor` if Chrome is missing). Failures print a `Fix:` line. Don't read `--help` or `npx hyperframes docs` unless a command fails: the commands here are enough. From command output take only the result and `Fix:` lines; ignore init's "Get started", update notices, skill suggestions and `Report:` JSON paths.
 
+Bundled scripts do the mechanical work; use them instead of writing your own loops (`<skill>` = this skill's base directory, shown when it loads; run them from the film folder with `python`):
+
+| Script | Does, in one call |
+| --- | --- |
+| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json` + scene starts (`references/voice-off.md`) |
+| `<skill>/scripts/images.py search` / `get` / `cut` | image search as one line per hit, parallel download that rejects HTML pages, crop → webp |
+| `<skill>/scripts/fonts.py "Family:700" "Family:italic:500"` | Google Fonts → `assets/fonts/*.woff2` + the `@font-face` lines to paste |
+| `<skill>/scripts/check.py` | `check` showing only what needs a decision (Work loop 5) |
+
+Independent steps go in the same message: the voice takes, the image search and the fonts don't wait on each other.
+
 Defaults: 1920×1080, 30 fps. Build only what was asked: no voiceover, captions or new aspect ratio unless requested (images and sound effects are the exception, see Project). A question or a loose idea gets an answer or a proposal, not an edit.
 
 ## Project
@@ -30,11 +41,17 @@ Preview and render use these same files: write in this format from the start, vi
 
 Other films are off-limits: never list, open, snapshot, play or copy anything in another `video/films/<name>/` (HTML, SPEC, assets, renders) as a reference — they bias the new film toward an old one. What films share comes only from `motion.md`, `design.md` and `components/`; anything else (content logs, notes, `refs/`) is fine to read. Only open a film when it is the one you are editing.
 
-New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init video/films/<name> && rm -f video/films/<name>/CLAUDE.md video/films/<name>/AGENTS.md` (the env var stops init installing the upstream skills; the `rm` drops the files that point to them). A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`), output into `video/refs/`. Code shapes, attributes and lint fixes: `references/format.md`.
+New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init video/films/<name> && cd video/films/<name> && rm -f CLAUDE.md AGENTS.md && mkdir -p assets/img assets/sfx assets/fonts assets/voice renders` (the env var stops init installing the upstream skills; the `rm` drops the files that point to them). Init's `index.html` is a 1920×1080 placeholder: don't read it, overwrite it with your first pass. A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`), output into `video/refs/`. Code shapes, attributes and lint fixes: `references/format.md`.
 
-Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names; otherwise search with `ddgs` (`pip install ddgs`; `DDGS().images(query, max_results=10, size="Large")`; some downloads fail, keep the ones that land). Filter by the result data first (size, source), then look only at the ones you pick: no watermarks, edited variants or low resolution. Copy only the ones you use into `assets/img/`. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
+Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names; otherwise:
+1. `python <skill>/scripts/images.py search "q1" "q2" "q3"`: every query of the film in one call (`pip install ddgs pillow` if missing). Pick from the listed size, title and page.
+2. `python <skill>/scripts/images.py get "$TEMP/img-<name>" URL a.jpg URL b.jpg …`: all picks at once, 2–3 candidates per slot, since some fail. A page URL works too (it takes the page's `og:image`).
+3. Look only at the ones that landed (Read them in one message): no watermarks, edited variants or low resolution.
+4. `python <skill>/scripts/images.py cut SRC assets/img/x.webp --box x0,y0,x1,y1 --w 1600` for each one you use (crop in source px; omit `--box` to keep the frame). Only those go into `assets/img/`.
 
-Sound effects: every film has them, music or not, unless the person says no. Take them from this skill's `assets/sfx/`: `manifest.json` gives each file's duration and description (whoosh, pop, click, impact, riser, glitch, typing…). Copy only the ones you use into the film's `assets/sfx/`. Each effect syncs exactly to its on-screen action, as its `description` says. Short accents (click, key-press, pop, whoosh) sit on the action's frame. Hits (impact, glitch) trigger on the landing and their decay bleeds into the next shot (J-cut). Builds (riser, whoosh-cinematic, impact-bass-2) are placed so the peak lands on the reveal or cut: start = peak − duration (riser: payoff − 10.03 s). Durations come from the manifest, so timing is known before anything plays. One file per distinct effect, reused for every cue that needs it. One `<audio>` per cue, all in one `sfx` group: `<audio id="sfx-pop-1" class="clip" src="assets/sfx/pop.mp3" data-start="2.43" data-volume="0.35" data-audio-group="sfx"></audio>`. Volume ≈ 0.35, under narration and music. No file fits a cue: skip it, never generate one.
+Fonts the design names that HyperFrames doesn't bundle (`references/format.md`, Fonts): `python <skill>/scripts/fonts.py "Archivo:700" "Newsreader:italic:500"` in the film folder, then paste the `@font-face` lines it prints. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
+
+Sound effects: every film has them, music or not, unless the person says no. Take them only from this skill's `assets/sfx/` (not from other skills): `manifest.json` gives each file's duration and description; read it once, no `ffprobe` needed (whoosh, pop, click, impact, riser, glitch, typing…). Copy only the ones you use into the film's `assets/sfx/`. Each effect syncs exactly to its on-screen action, as its `description` says. Short accents (click, key-press, pop, whoosh) sit on the action's frame. Hits (impact, glitch) trigger on the landing and their decay bleeds into the next shot (J-cut). Builds (riser, whoosh-cinematic, impact-bass-2) are placed so the peak lands on the reveal or cut: start = peak − duration (riser: payoff − 10.03 s). Durations come from the manifest, so timing is known before anything plays. One file per distinct effect, reused for every cue that needs it. One `<audio>` per cue, all in one `sfx` group: `<audio id="sfx-pop-1" class="clip" src="assets/sfx/pop.mp3" data-start="2.43" data-volume="0.35" data-audio-group="sfx"></audio>`. Volume ≈ 0.35, under narration and music. No file fits a cue: skip it, never generate one.
 
 ## Contract (`check` enforces most of it)
 
@@ -47,18 +64,24 @@ Sound effects: every film has them, music or not, unless the person says no. Tak
 7. Paint order is `z-index`, not `data-track-index`.
 8. Grades/grain/blur on footage: `npx hyperframes media-treatment`, not CSS filters.
 9. Copy, colours and swappable media are variables (`data-var-text`, `data-var-src`, `var(--id)`), so the video can be re-branded without code.
-10. Content in the 90% action-safe box; text and captions in the 80% title-safe box. Vertical 9:16 for Reels/TikTok: the platform safe box in `references/craft.md` (Vertical) instead.
+10. Content in the 90% action-safe box; text and captions in the 80% title-safe box. Vertical 9:16 (1080×1920) for Reels/TikTok instead: words, faces, product and CTA inside x 65–940, y 270–1250 px (top 270 px: platform header/tabs; bottom 670 px: caption, username, CTA; right 140 px: like/share rail); outside it only footage, background and texture. The rest of vertical craft: `references/craft.md` (Vertical).
 
 ## Work loop
 
 1. **Editing an existing film?** `npx hyperframes timeline --json` in that film shows what plays when (only here, never for a new film). Build on what is there.
 2. **Story** (anything over ~30 s that tells something): write **three storylines** in words only — each a different world, device and form (`references/craft.md` §Story). Recommend one first. If the person is there, stop until they pick; if they said "no stops", build your pick.
 3. **Spec** (new films over ~30 s; skip for edits and short pieces): write `SPEC.md` — every adjective turned into a number (template below). Build from it, check against it.
-4. **Build**: write the whole first pass in `index.html`, then fix with `check` (it runs lint; no separate `lint`). Don't plan every coordinate up front. Repeated elements are a JS function or CSS class in the same file, not new files.
-5. **Check**: `HYPERFRAMES_NO_UPDATE_CHECK=1 npx hyperframes check 2>/dev/null` (PowerShell: `2>$null`). Never `--json`; stderr is only progress lines. Non-zero exit = failed. Fix every error, weigh every warning (`line_unread`, `dead_stretch`, `text_below_floor`, `first_frame_empty`, `film_silent`). Ignore `nested_structure_needs_subcomposition`: scenes in one file are on purpose.
-6. **Look** (new films only; skip for small edits or if the person says no review): `npx hyperframes snapshot --review` (scene starts/mids, every cut ±0.2 s, phone width). For one move: `snapshot --range A,B --frames 8`, `--at t1,t2`, `keyframes --json --selector '#id'`. Read the contact sheets `review-beats.jpg` and `review-phone.jpg` — that is how you see the video; open a single PNG only to inspect a seam or detail. Then run the **Review** below.
+4. **Build**: write the whole first pass in `index.html`, then fix with `check` (it runs lint; no separate `lint`). Don't plan every coordinate up front. With a voiceover, scene starts and durations come straight from `assets/voice/timings.json` (`scene_start`, `scene_duration`, `vo_start`, word starts for cues): copy them, don't recompute. Full-frame overlays (flash, wipe) start at `opacity: 0` in CSS, or `check` fails them. Repeated elements are a JS function or CSS class in the same file, not new files.
+5. **Check**: `python <skill>/scripts/check.py` in the film folder. It runs `npx hyperframes check` and prints every error in full, each warning kind once with up to 3 places, and only counts for infos and for the warnings one-file films raise on purpose (`nested_structure_needs_subcomposition`, `composition_file_too_large`, `timeline_track_too_dense`). Don't re-run `check` raw or re-filter it. `FAILED` = non-zero exit. Fix every error, weigh every warning (`line_unread`, `dead_stretch`, `text_below_floor`, `first_frame_empty`, `film_silent`). After fixes, re-check and re-snapshot in the same command: `python <skill>/scripts/check.py && npx hyperframes snapshot --at … | tail -1`.
+6. **Look** (new films only; skip for small edits or if the person says no review): `npx hyperframes snapshot --review 2>&1 | grep -i sheet` (scene starts/mids, every cut ±0.2 s, phone width) prints the paths of the contact sheets `review-beats-N.jpg` and `review-phone-N.jpg` (N = 1, 2… for long films; there is also a `review-seam-NN.jpg` per cut). Read all the beat and phone sheets in one message: that is how you see the video; open a seam sheet or a single PNG only to inspect a seam or detail. For one move: `snapshot --range A,B --frames 8`, `--at t1,t2` (`| tail -1` gives its `contact-sheet.jpg`), `keyframes --json --selector '#id'`. Then run the **Review** below.
 7. **Preview**: `npx hyperframes preview --background`; give the URL and wait for approval, unless they asked for the file.
-8. **Render**: `npx hyperframes render --quality delivery --output renders/<name>.mp4` (`draft` while iterating), always into the project's `renders/`; pipe it through `| tail -4`, the progress lines are noise. Confirm `ffprobe` duration = root `data-duration`; look at decoded frames. Sound: `npx hyperframes audio renders/<name>.mp4 --json` (you can measure it, not hear it — say so).
+8. **Render** and measure in one command, always into the project's `renders/` (`--quality draft` while iterating):
+   ```bash
+   HYPERFRAMES_NO_UPDATE_CHECK=1 npx hyperframes render --quality delivery --output renders/<name>.mp4 2>&1 | tail -3
+   ffprobe -v error -show_entries format=duration -of csv=p=0 renders/<name>.mp4
+   ffmpeg -hide_banner -i renders/<name>.mp4 -af ebur128=peak=true -f null - 2>&1 | grep -E "I:|Peak:" | tail -2
+   ```
+   Duration must equal root `data-duration`; loudness −14 to −16 LUFS, peak ≤ −1 dBTP (else `npx hyperframes normalize-audio`). The render draws the frames `snapshot` already showed, so don't re-inspect frames unless the render printed a warning. You can measure the sound, not hear it: say so.
 
 Timeline edits without hand-editing: `npx hyperframes timeline move|trim|split|set|duplicate|delete <#ref> … --plan --json`, then without `--plan`.
 
