@@ -28,6 +28,8 @@ video/
 
 Preview and render use these same files: write in this format from the start, view with `npx hyperframes preview`. Never write your own player or a separate preview HTML.
 
+Other films are off-limits: never list, open, snapshot, play or copy anything in another `video/films/<name>/` (HTML, SPEC, assets, renders) as a reference — they bias the new film toward an old one. What films share comes only from `motion.md`, `design.md` and `components/`; anything else (content logs, notes, `refs/`) is fine to read. Only open a film when it is the one you are editing.
+
 New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init video/films/<name> && rm -f video/films/<name>/CLAUDE.md video/films/<name>/AGENTS.md` (the env var stops init installing the upstream skills; the `rm` drops the files that point to them). A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`), output into `video/refs/`. Code shapes, attributes and lint fixes: `references/format.md`.
 
 Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names; otherwise search with `ddgs` (`pip install ddgs`; `DDGS().images(query, max_results=10, size="Large")`; some downloads fail, keep the ones that land). Filter by the result data first (size, source), then look only at the ones you pick: no watermarks, edited variants or low resolution. Copy only the ones you use into `assets/img/`. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
@@ -47,7 +49,7 @@ Images and b-roll: always use them without asking, unless the person or the proj
 
 ## Work loop
 
-1. **Existing project?** `npx hyperframes timeline --json` shows what plays when (only here, never for a new film). Build on what is there.
+1. **Editing an existing film?** `npx hyperframes timeline --json` in that film shows what plays when (only here, never for a new film). Build on what is there.
 2. **Story** (anything over ~30 s that tells something): write **three storylines** in words only — each a different world, device and form (`references/craft.md` §Story). Recommend one first. If the person is there, stop until they pick; if they said "no stops", build your pick.
 3. **Spec** (new films over ~30 s; skip for edits and short pieces): write `SPEC.md` — every adjective turned into a number (template below). Build from it, check against it.
 4. **Build**: write the whole first pass in `index.html`, then fix with `check` (it runs lint; no separate `lint`). Don't plan every coordinate up front. Repeated elements are a JS function or CSS class in the same file, not new files.
