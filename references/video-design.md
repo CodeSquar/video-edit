@@ -17,18 +17,18 @@ Referencias que pase el usuario: videos y/o frames.
   - Referencias con estilos distintos: preguntá cuál manda.
   - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
   - Si también falta `video/motion.md`, una sola ronda para los dos.
-  - Nunca preguntes lo que ya dicen el DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay y marcá `(default)`.
+  - Nunca preguntes lo que ya dice el DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay.
 - **Video**: sacá frames representativos con `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)'" -vsync vfr f/%03d.jpg` (uno por plano) y miralos.
 - **Colores**: medilos, no los adivines. `python3 -c "from PIL import Image;im=Image.open('f.jpg').convert('RGB').quantize(8);p=im.getpalette();print(['#%02x%02x%02x'%tuple(p[i*3:i*3+3]) for _,i in sorted(im.getcolors(),reverse=True)])"`
 - **DESIGN.md de raíz** (web): si existe, heredá marca (colores, fuentes) referenciando sus tokens por nombre. No copies valores. Las referencias de video mandan en todo lo demás.
-- Lo que no se pueda deducir lleva un default marcado `(default)`.
+- Lo que no se ve directo se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, se omite; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/design.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
 - Valores concretos: hex, px sobre 1080×1920 (o el formato del proyecto), pesos y tracking. Nunca "moderno" o "limpio" sin valor.
-- Cada regla sale de las referencias, del DESIGN.md de raíz o va marcada `(default)`.
+- Cada regla sale de las referencias, del DESIGN.md de raíz o va marcada `(inferido: …)`. Sin evidencia, no hay regla.
 - Las referencias ganan: si usan algo de la lista de prohibidos, se permite y se anota.
 - Máximo ~80 líneas. Sin teoría.
 
@@ -53,7 +53,7 @@ Fondo, texto, acento (uno solo salvo que las refs muestren más), scrim.
 - Punto focal y alineación dominante
 - Márgenes en px
 - Safe zones: las de la plataforma (no escribas números salvo una excepción propia del proyecto)
-- Densidad: una idea por frame (default)
+- Densidad: una idea por frame, salvo que las refs muestren más
 
 ## Fondos y textura
 Sólido, footage, grano, viñeta. Cómo se garantiza contraste sobre footage (scrim, caja, stroke).

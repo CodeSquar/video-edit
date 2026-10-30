@@ -16,19 +16,19 @@ Referencias que pase el usuario: videos (preferido) y/o frames.
   - Referencias con estilos distintos: preguntá cuál manda.
   - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
   - Si también falta `video/design.md`, una sola ronda para los dos.
-  - Nunca preguntes lo que ya dicen DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay y marcá `(default)`.
+  - Nunca preguntes lo que ya dice el DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay.
 - **Video**: el motion se mide, no se adivina.
   - fps y duración: `ffprobe`.
   - Cortes: `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep pts_time` → duración media de plano.
   - Frames: `ffmpeg -i ref.mp4 -vf fps=4 f/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
-- **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver lleva un default marcado `(default)`.
+- **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, se omite; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/motion.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
 - Valores concretos: ms o frames, curvas `cubic-bezier` o nombres GSAP (`power3.out`). Nunca "suave" o "dinámico" sin número.
-- Cada regla sale de las referencias o va marcada `(default)`.
+- Cada regla sale de las referencias o va marcada `(inferido: …)`. Sin evidencia, no hay regla.
 - Máximo ~80 líneas. Sin teoría.
 
 ## Formato de video/motion.md
