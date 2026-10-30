@@ -1,6 +1,6 @@
 ---
 name: video-design
-description: Genera o actualiza video/design.md (paleta, tipografía, composición, fondos, look de captions y prohibiciones visuales) a partir de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el estilo visual de los videos de un proyecto.
+description: Genera o actualiza video/design.md (paleta, tipografía, composición, fondos, look de captions y prohibiciones visuales) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el estilo visual de los videos de un proyecto.
 ---
 
 # Video Design
@@ -9,10 +9,10 @@ Escribe `video/design.md`: cómo se ve cada frame. No define tiempos, easing, tr
 
 ## Entrada
 
-Referencias que pase el usuario: videos y/o frames.
+Lo que pase el usuario: una descripción del estilo y/o referencias (videos o frames). Lo que describe manda; las referencias completan el resto.
 
 - Preguntá poco: una sola ronda al inicio, máximo 3 preguntas, solo lo que no se puede medir y cambia el archivo. Colores, tamaños y márgenes se miden, no se preguntan.
-  - Sin referencias: pedí 1–3 videos o frames.
+  - Sin descripción ni referencias: pedí 1–3 videos o frames.
   - Fuente o logo de marca que no se puede identificar o no está en `assets/fonts/`: pedí los archivos. Sin ellos, usá una parecida y anotalo.
   - Referencias con estilos distintos: preguntá cuál manda.
   - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
@@ -21,14 +21,14 @@ Referencias que pase el usuario: videos y/o frames.
 - **Video**: sacá frames representativos con `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)'" -vsync vfr f/%03d.jpg` (uno por plano) y miralos.
 - **Colores**: medilos, no los adivines. `python3 -c "from PIL import Image;im=Image.open('f.jpg').convert('RGB').quantize(8);p=im.getpalette();print(['#%02x%02x%02x'%tuple(p[i*3:i*3+3]) for _,i in sorted(im.getcolors(),reverse=True)])"`
 - **DESIGN.md de raíz** (web): si existe, heredá marca (colores, fuentes) referenciando sus tokens por nombre. No copies valores. Las referencias de video mandan en todo lo demás.
-- Lo que no se ve directo se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, se omite; nunca rellenes con un valor genérico.
+- Lo que no se ve directo se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/design.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
 - Valores concretos: hex, px sobre 1080×1920 (o el formato del proyecto), pesos y tracking. Nunca "moderno" o "limpio" sin valor.
-- Cada regla sale de las referencias, del DESIGN.md de raíz o va marcada `(inferido: …)`. Sin evidencia, no hay regla.
+- Cada regla sale de la descripción, de las referencias, del DESIGN.md de raíz o va marcada `(inferido: …)`. Una descripción vaga ("limpio") se traduce a valores y se marca `(inferido: …)`.
 - Las referencias ganan: si usan algo de la lista de prohibidos, se permite y se anota.
 - Máximo ~80 líneas. Sin teoría.
 
@@ -38,7 +38,7 @@ Referencias que pase el usuario: videos y/o frames.
 # Design
 
 ## Mundo visual
-Una frase. Ej: "Editorial oscuro: negro cálido, una sola tipografía condensada, footage con grano."
+Una frase.
 
 ## Paleta
 | Rol | Hex o token | Uso |

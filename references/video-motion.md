@@ -1,6 +1,6 @@
 ---
 name: video-motion
-description: Genera o actualiza video/motion.md (ritmo, timing, easing, transiciones, texto en movimiento y prohibiciones) a partir de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el motion o el estilo de movimiento de los videos de un proyecto.
+description: Genera o actualiza video/motion.md (ritmo, timing, easing, transiciones, texto en movimiento y prohibiciones) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el motion o el estilo de movimiento de los videos de un proyecto.
 ---
 
 # Video Motion
@@ -9,10 +9,10 @@ Escribe `video/motion.md`: cómo se mueve el video. No define colores, fuentes n
 
 ## Entrada
 
-Referencias que pase el usuario: videos (preferido) y/o frames.
+Lo que pase el usuario: una descripción del estilo y/o referencias (videos, preferido, o frames). Lo que describe manda; las referencias completan el resto.
 
 - Preguntá poco: una sola ronda al inicio, máximo 3 preguntas, solo lo que no se puede medir y cambia el archivo. Timing, easing y cortes se miden, no se preguntan.
-  - Sin referencias: pedí 1–3 videos (no frames).
+  - Sin descripción ni referencias: pedí 1–3 videos (no frames).
   - Referencias con estilos distintos: preguntá cuál manda.
   - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
   - Si también falta `video/design.md`, una sola ronda para los dos.
@@ -21,14 +21,14 @@ Referencias que pase el usuario: videos (preferido) y/o frames.
   - fps y duración: `ffprobe`.
   - Cortes: `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep pts_time` → duración media de plano.
   - Frames: `ffmpeg -i ref.mp4 -vf fps=4 f/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
-- **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, se omite; nunca rellenes con un valor genérico.
+- **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/motion.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
 - Valores concretos: ms o frames, curvas `cubic-bezier` o nombres GSAP (`power3.out`). Nunca "suave" o "dinámico" sin número.
-- Cada regla sale de las referencias o va marcada `(inferido: …)`. Sin evidencia, no hay regla.
+- Cada regla sale de la descripción, de las referencias o va marcada `(inferido: …)`. Una descripción vaga ("dinámico") se traduce a valores y se marca `(inferido: …)`.
 - Máximo ~80 líneas. Sin teoría.
 
 ## Formato de video/motion.md
@@ -37,7 +37,7 @@ Referencias que pase el usuario: videos (preferido) y/o frames.
 # Motion
 
 ## Personalidad
-Una frase. Ej: "Seco y editorial: cortes rápidos, entradas cortas, nada rebota."
+Una frase.
 
 ## Formato
 - Plataforma: TikTok, Reels, Shorts, YouTube (una o varias)
@@ -60,7 +60,7 @@ Texto, imágenes/footage, UI, overlays. Stagger entre elementos.
 Palabra a palabra o bloque, palabras por vez, cómo se marca el énfasis con movimiento (el color lo define design.md).
 
 ## Movimiento continuo
-Qué se mueve durante los holds (ej: push-in 3% por plano) o "nada".
+Qué se mueve durante los holds o "nada".
 
 ## Prohibido
 5–8 reglas concretas.
