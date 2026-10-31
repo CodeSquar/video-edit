@@ -4,7 +4,7 @@ Only when the person asked for a voiceover. The voice is the clock: write the li
 
 ## Script
 
-- Pace ≈ 2.2–2.5 words/s. 15 s ≈ 35 words, 30 s ≈ 70, 60 s ≈ 140. ≤ ~19 words per scene. The script should feel shorter than the film; silence between lines is a feature.
+- Pace ≈ 3.3 words/s (takes at 1.2x, pauses cut). 15 s ≈ 50 words, 30 s ≈ 100, 60 s ≈ 200. ≤ ~19 words per scene. No silence between lines: the next voice starts as the last one ends.
 - Write like a person: contractions, short lines mixed with longer ones. Read it aloud; if it sounds like a brochure, rewrite.
 - The first line creates tension (a claim, a question, a contrast, a number). Never "Welcome to…" / "Introducing…".
 - Write each line as discrete cues ("first the snowball — then the hill — then the speed"), so each on-screen piece can land when the voice names it.
@@ -34,10 +34,10 @@ s2 | Ten times faster than last year.
 Then, from the film folder:
 
 ```bash
-python <skill>/scripts/voice.py voice.txt --instructions "Warm, clear, unhurried. Short pause between phrases."
+python <skill>/scripts/voice.py voice.txt --instructions "Energetic, quick, punchy. No pauses between phrases."
 ```
 
-Delivery goes in `--instructions`, written for the film's language and accent (e.g. "Español rioplatense, con voseo, cálido…"), never in the text. The script requests every take in parallel (Gemini returns 24 kHz pcm; it wraps it to `assets/voice/<id>.wav`), trims the silence at both ends, applies **one tempo to the whole film** (`--tempo auto`: a read slower than 2.2 words/s is sped up toward 2.4, at most 1.2×; or a fixed `--tempo 1.1`), transcribes every take in one pass and writes `assets/voice/timings.json`. It prints per take: length, words/s, each word's time inside the take, and a suggested `scene_start` / `scene_duration` (take + `--lead 0.2` + `--air 0.6`) / `vo_start`, back to back, then the `const VO = {…};` line. Use those numbers; give a payoff more air by shifting the later scenes, never stretch motion to fill.
+Delivery goes in `--instructions`, written for the film's language and accent (e.g. "Español rioplatense, con voseo, cálido…"), never in the text. The script requests every take in parallel (Gemini returns 24 kHz pcm; it wraps it to `assets/voice/<id>.wav`), trims the silence at both ends and cuts every inner pause to 0.08 s, applies **one tempo to the whole film** (`--tempo auto`: 1.2×; or a fixed `--tempo 1.1`), transcribes every take in one pass and writes `assets/voice/timings.json`. It prints per take: length, words/s, each word's time inside the take, and a suggested `scene_start` / `scene_duration` (take + `--lead 0` + `--air 0.05`) / `vo_start`, back to back, then the `const VO = {…};` line. Use those numbers; give a payoff a beat (≤ 0.2 s) by shifting the later scenes, never stretch motion to fill.
 
 The film has a target length (the script, `motion.md`): pass `--tempo fit:45` on the first run and the tempo is picked to land it (clamped to 0.9–1.25×), so there is no second run. Wrong length afterwards: run again with `--tempo 1.1`. The takes already made are re-timed to it and the timings rebuilt; nothing is re-requested, no `ffmpeg` by hand. A `402 … in-flight` from OpenRouter means it is holding credit for the takes still in flight, not that the balance ran out; the script waits and retries those on its own.
 

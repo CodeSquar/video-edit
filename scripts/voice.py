@@ -3,13 +3,13 @@
 
   python voice.py LINES_FILE [--out assets/voice] [--instructions "..."] [--voice Kore]
                   [--model google/gemini-3.8-flash-lite-tts] [--tempo auto|1.1|fit:45]
-                  [--air 0.6] [--lead 0.2] [--only s3,s5] [--force]
+                  [--air 0.05] [--lead 0] [--only s3,s5] [--force]
 
 LINES_FILE: one take per line, `<scene-id> | <spoken text>` (blank lines and # comments skipped).
 Run from the film folder. Needs $OPENROUTER_API_KEY, ffmpeg, npx hyperframes.
 
-Steps: all takes requested in parallel (pcm 24 kHz -> wav) -> edge silence trimmed ->
-one tempo for the whole film (auto: speeds up a slow read toward 2.4 words/s, max 1.2x;
+Steps: all takes requested in parallel (pcm 24 kHz -> wav) -> edge silence trimmed, inner pauses
+cut to 0.08 s -> one tempo for the whole film (auto: 1.2x;
 fit:45 = the tempo that makes the film ~45 s, within 0.9-1.25x) ->
 one transcription pass over all takes joined -> assets/voice/timings.json + a table:
 take length, words/s, word starts inside the take, a suggested scene start/duration, and the
@@ -72,7 +72,9 @@ def make_take(sid, text, out, args):
         if os.path.exists(pcm):
             os.remove(pcm)
         raise
-    trim = "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse"
+    # edges cut; any inner pause over 0.15 s shrinks to 0.08 s, so phrases run back to back
+    trim = ("silenceremove=start_periods=1:start_threshold=-45dB:stop_periods=-1:stop_duration=0.15:"
+            "stop_threshold=-45dB:stop_silence=0.08,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse")
     r = run(["ffmpeg", "-loglevel", "error", "-y", "-f", "s16le", "-ar", "24000", "-ac", "1", "-i", pcm, "-af", trim, wav])
     os.remove(pcm)
     if r.returncode:
@@ -117,10 +119,10 @@ def main():
     ap.add_argument("--out", default="assets/voice")
     ap.add_argument("--voice", default="Kore")
     ap.add_argument("--model", default="google/gemini-3.8-flash-lite-tts")
-    ap.add_argument("--instructions", default="Warm, clear, unhurried. Short pause between phrases.")
+    ap.add_argument("--instructions", default="Energetic, quick, punchy. No pauses between phrases.")
     ap.add_argument("--tempo", default="auto")
-    ap.add_argument("--air", type=float, default=0.6, help="silence after each take inside its scene")
-    ap.add_argument("--lead", type=float, default=0.2, help="voice starts this long after its scene")
+    ap.add_argument("--air", type=float, default=0.05, help="silence after each take inside its scene")
+    ap.add_argument("--lead", type=float, default=0.0, help="voice starts this long after its scene")
     ap.add_argument("--only", default="", help="comma list of ids to (re)generate")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
@@ -146,7 +148,6 @@ def main():
 
     ids = [s for s, _ in lines]
     nwords = {s: len(t.split()) for s, t in lines}
-    total_w, total_d = sum(nwords.values()), sum(dur(os.path.join(args.out, s + ".wav")) for s in ids)
     tpath = os.path.join(args.out, "timings.json")
     prev = json.load(open(tpath, encoding="utf-8")).get("tempo") if os.path.exists(tpath) else None
     if args.tempo.startswith("fit:"):  # each take's length at 1x, then the tempo that lands the target
@@ -159,8 +160,7 @@ def main():
     elif prev and not args.force:
         tempo = prev  # re-generated takes match the ones already sped up
     else:
-        wps = total_w / total_d
-        tempo = round(min(1.2, 2.4 / wps), 2) if wps < 2.2 else 1.0
+        tempo = 1.2  # the edit-by-hand default: every voice 1.2x
     film_tempo = tempo
     new = {s for s, _ in todo}
     for s in ids:  # new takes are raw; existing ones are already at the stored tempo

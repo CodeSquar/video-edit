@@ -145,7 +145,7 @@ QA:      frames to check and what each must show
 - Overlap: next element starts when the previous is 30–50% done. Stagger: letters 1 frame, words 60–120 ms, list items 40–80 ms.
 - **Vector law at cuts:** the exit decides the entry — same axis, same direction (on Z: same sign of scale change), matched speed via mirrored eases (`power4.in` out → `power4.out` in), cut mid-motion on both sides. Pick one dominant direction for the film; spend other directions only with a visible cause.
 - Every cut has a cause on screen: the clicked thing becomes the next shot. 3–5 transition kinds per film, ≤⅓ hard cuts between beats, worlds never crossfade. Catalog: `references/craft.md` §Transitions.
-- Pause 0.3–0.75 s before the payoff; the payoff plays at normal speed.
+- At most a 0.2 s beat before the payoff; the payoff plays at normal speed.
 - Pause the film at any second: something meaningful is mid-flight (a reveal landing, the camera travelling, the UI acting) — never idle wobble.
 
 **Story** (any film that tells something)
