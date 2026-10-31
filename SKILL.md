@@ -11,8 +11,8 @@ Bundled scripts do the mechanical work; use them instead of writing your own loo
 
 | Script | Does, in one call |
 | --- | --- |
-| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json` + scene starts (`references/voice-off.md`); to fit the script's length, rerun with `--tempo 1.1`: it re-times the takes already made |
-| `<skill>/scripts/images.py search` / `get` / `cut` | image search as one line per hit, parallel download that rejects HTML pages, crop → webp |
+| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json`, scene starts and the `const VO = {…};` line for cues (`references/voice-off.md`). A target length: `--tempo fit:45` on the first run. Once `index.html` has the VO line, every rerun (`--only s3`, new `--tempo`) also re-times the film itself (`retime.py`) |
+| `<skill>/scripts/images.py search` / `get` / `cut` / `sheet DIR` | image search as one line per hit, parallel download that rejects HTML pages, crop → webp; `sheet` = a local folder as labelled contact sheets to Read in one message |
 | `<skill>/scripts/fonts.py "Family:700" "Family:italic:500"` | Google Fonts → `assets/fonts/*.woff2` + the `@font-face` lines to paste |
 | `<skill>/scripts/check.py` | `check` showing only what needs a decision (Work loop 5) |
 
@@ -43,7 +43,7 @@ Other films are off-limits: never list, open, snapshot, play or copy anything in
 
 New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init video/films/<name> && cd video/films/<name> && rm -f CLAUDE.md AGENTS.md && mkdir -p assets/img assets/sfx assets/fonts assets/voice renders` (the env var stops init installing the upstream skills; the `rm` drops the files that point to them). Init's `index.html` is a 1920×1080 placeholder: don't read it, overwrite it with your first pass. A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`), output into `video/refs/`. Code shapes, attributes and lint fixes: `references/format.md`.
 
-Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names; otherwise:
+Images and b-roll: always use them without asking, unless the person or the project says otherwise. Source: a folder the person names (`python <skill>/scripts/images.py sheet <folder>`, then Read the sheets it prints in one message); otherwise:
 1. `python <skill>/scripts/images.py search "q1" "q2" "q3"`: every query of the film in one call (`pip install ddgs pillow` if missing). Pick from the listed size, title and page.
 2. `python <skill>/scripts/images.py get "$TEMP/img-<name>" URL a.jpg URL b.jpg …`: all picks at once, 2–3 candidates per slot, since some fail. A page URL works too (it takes the page's `og:image`).
 3. Look only at the ones that landed (Read them in one message): no watermarks, edited variants or low resolution.
@@ -51,7 +51,22 @@ Images and b-roll: always use them without asking, unless the person or the proj
 
 Fonts the design names that HyperFrames doesn't bundle (`references/format.md`, Fonts): `python <skill>/scripts/fonts.py "Archivo:700" "Newsreader:italic:500"` in the film folder, then paste the `@font-face` lines it prints. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
 
-Sound effects: every film has them, music or not, unless the person says no. Take them only from this skill's `assets/sfx/` (not from other skills): `manifest.json` gives each file's duration and description; read it once, no `ffprobe` needed (whoosh, pop, click, impact, riser, glitch, typing…). Copy only the ones you use into the film's `assets/sfx/`. Each effect syncs exactly to its on-screen action, as its `description` says. Short accents (click, key-press, pop, whoosh) sit on the action's frame. Hits (impact, glitch) trigger on the landing and their decay bleeds into the next shot (J-cut). Builds (riser, whoosh-cinematic, impact-bass-2) are placed so the peak lands on the reveal or cut: start = peak − duration (riser: payoff − 10.03 s). Durations come from the manifest, so timing is known before anything plays. One file per distinct effect, reused for every cue that needs it. One `<audio>` per cue, all in one `sfx` group: `<audio id="sfx-pop-1" class="clip" src="assets/sfx/pop.mp3" data-start="2.43" data-volume="0.35" data-audio-group="sfx"></audio>`. Volume ≈ 0.35, under narration and music. No file fits a cue: skip it, never generate one.
+Sound effects: every film has them, music or not, unless the person says no. Take them only from this skill's `assets/sfx/<name>.mp3` (not from other skills). The table is the whole library, durations included, so no `manifest.json` read and no `ffprobe`:
+
+| Name (s) | Use |
+| --- | --- |
+| `click` 0.37, `key-press` 0.40 | UI tap/toggle; one keystroke |
+| `pop` 0.72 | element/chip/badge appears |
+| `whoosh` 0.57 | fast move, swipe, snappy transition |
+| `typing` 1.50 | text being typed; start as it begins |
+| `ping` 1.32, `sparkle` 1.80 | key reveal or data point; shine on a hero |
+| `chime` 2.50, `notification` 2.46 | success/confirmation; toast or message in |
+| `error` 1.62 | failure, a "wrong" beat |
+| `glitch-1` 2.64, `glitch-2` 3.50, `glitch-3` 3.10 | hard-cut hit; harsh chaotic reveal; subtle texture under other audio |
+| `impact-bass-1` 2.12 | logo/headline slam on the landing |
+| `impact-bass-2` 2.59, `whoosh-cinematic` 5.54, `riser` 10.03 | builds: peak at the end |
+
+Copy only the ones you use into the film's `assets/sfx/`. Each effect syncs exactly to its on-screen action. Short accents (click, key-press, pop, whoosh) sit on the action's frame. Hits (impact, glitch) trigger on the landing and their decay bleeds into the next shot (J-cut). Builds are placed so the peak lands on the reveal or cut: start = peak − duration (riser: payoff − 10.03 s). One file per distinct effect, reused for every cue that needs it. One `<audio>` per cue, all in one `sfx` group: `<audio id="sfx-pop-1" class="clip" src="assets/sfx/pop.mp3" data-start="2.43" data-volume="0.35" data-audio-group="sfx"></audio>`. Volume ≈ 0.35, under narration and music. No file fits a cue: skip it, never generate one.
 
 ## Contract (`check` enforces most of it)
 
@@ -71,7 +86,7 @@ Sound effects: every film has them, music or not, unless the person says no. Tak
 1. **Editing an existing film?** `npx hyperframes timeline --json` in that film shows what plays when (only here, never for a new film). Build on what is there.
 2. **Story** (anything over ~30 s that tells something): write **three storylines** in words only — each a different world, device and form (`references/craft.md` §Story). Recommend one first. If the person is there, stop until they pick; if they said "no stops", build your pick.
 3. **Spec** (new films over ~30 s; skip for edits and short pieces): write `SPEC.md` — every adjective turned into a number (template below). Build from it, check against it.
-4. **Build**: write the whole first pass in `index.html`, then fix with `check` (it runs lint; no separate `lint`). Don't plan every coordinate up front. With a voiceover, scene starts and durations come straight from `assets/voice/timings.json` (`scene_start`, `scene_duration`, `vo_start`, word starts for cues): copy them, don't recompute. Full-frame overlays (flash, wipe) start at `opacity: 0` in CSS, or `check` fails them. Repeated elements are a JS function or CSS class in the same file, not new files.
+4. **Build**: write the whole first pass in `index.html`, then fix with `check` (it runs lint; no separate `lint`). Don't plan every coordinate up front. With a voiceover, scene starts and durations come straight from voice.py's table (`start`, `dur`, `vo`): copy them, don't recompute or parse `timings.json`. Paste its `const VO = {…};` line at the top of the script and write every voice-driven tween position as `VO.s2 + 1.46` (the word's time from the table), never as an absolute number, so a new take moves its cues on its own. Full-frame overlays (flash, wipe) start at `opacity: 0` in CSS, or `check` fails them. Repeated elements are a JS function or CSS class in the same file, not new files.
 5. **Check**: `python <skill>/scripts/check.py` in the film folder. It runs `npx hyperframes check` and prints every error in full, each warning kind once with up to 3 places, and only counts for infos and for the warnings one-file films raise on purpose (`nested_structure_needs_subcomposition`, `composition_file_too_large`, `timeline_track_too_dense`). Don't re-run `check` raw or re-filter it. `FAILED` = non-zero exit. Fix every error, weigh every warning (`line_unread`, `dead_stretch`, `text_below_floor`, `first_frame_empty`, `film_silent`). After fixes, re-check and re-snapshot in the same command: `python <skill>/scripts/check.py && npx hyperframes snapshot --at … | tail -1`.
 6. **Look** (new films only; skip for small edits or if the person says no review): `npx hyperframes snapshot --review 2>&1 | grep -i sheet` (scene starts/mids, every cut ±0.2 s, phone width) prints the paths of the contact sheets `review-beats-N.jpg` and `review-phone-N.jpg` (N = 1, 2… for long films; there is also a `review-seam-NN.jpg` per cut). Read all the beat and phone sheets in one message: that is how you see the video; open a seam sheet or a single PNG only to inspect a seam or detail. For one move: `snapshot --range A,B --frames 8`, `--at t1,t2` (`| tail -1` gives its `contact-sheet.jpg`), `keyframes --json --selector '#id'`. Then run the **Review** below.
 7. **Preview**: `npx hyperframes preview --background`; give the URL and wait for approval, unless they asked for the file.

@@ -8,6 +8,8 @@
       og:image and that is fetched instead); prints NAME W×H or why it failed
   python images.py cut SRC OUT.webp [--box x0,y0,x1,y1] [--w 1600] [--q 88]
       crop (source px) / resize / save as webp for assets/img/
+  python images.py sheet DIR [--out DIR]
+      a local folder as labelled contact sheets (up to 64 per jpg, bigger cells when there are few) + one line per file: index name W×H
 
 Needs `pip install ddgs pillow`. Look at a downloaded file before using it; this only filters.
 """
@@ -81,6 +83,41 @@ def cut(a):
     print(f"{a.out}: {im.width}×{im.height}")
 
 
+def sheet(a):
+    """Contact sheets of a local folder: one Read shows every image, each labelled with its index."""
+    import math, tempfile, warnings
+    from PIL import Image, ImageDraw
+    warnings.filterwarnings("ignore")
+    exts = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".jfif", ".avif", ".bmp")
+    files = sorted(f for f in os.listdir(a.dir) if f.lower().endswith(exts))
+    per = 64
+    out_dir = a.out or tempfile.gettempdir()
+    rows_txt, paths = [], []
+    for k in range(0, len(files), per):
+        chunk = files[k:k + per]
+        # near-square grid ~1920 px wide: few images get big cells (4 -> 2x2 of 960), 64 -> 8x8 of 240
+        cols = min(8, math.ceil(math.sqrt(len(chunk))))
+        cw = 1920 // cols; ch = cw + 20
+        im_sheet = Image.new("RGB", (cols * cw, -(-len(chunk) // cols) * ch), "white")
+        d = ImageDraw.Draw(im_sheet)
+        for j, f in enumerate(chunk):
+            i, x, y = k + j, (j % cols) * cw, (j // cols) * ch
+            try:
+                im = Image.open(os.path.join(a.dir, f))
+                size = f"{im.width}x{im.height}"
+                im = im.convert("RGB"); im.thumbnail((cw - 10, ch - 30))
+                im_sheet.paste(im, (x + 5, y + 5))
+            except Exception:
+                size = "unreadable"
+            d.rectangle((x, y + ch - 24, x + cw, y + ch), fill="white")
+            d.text((x + 5, y + ch - 22), f"{i} {f[:26]}", fill="black")
+            rows_txt.append(f"{i} {f} {size}")
+        p = os.path.join(out_dir, f"sheet-{k // per + 1}.jpg")
+        im_sheet.save(p, quality=80); paths.append(p)
+    print("\n".join(rows_txt))
+    print("sheets (Read all in one message): " + ", ".join(paths))
+
+
 ap = argparse.ArgumentParser()
 sub = ap.add_subparsers(dest="cmd", required=True)
 s = sub.add_parser("search"); s.add_argument("queries", nargs="+"); s.add_argument("--n", type=int, default=10)
@@ -88,5 +125,6 @@ s.add_argument("--min", type=int, default=700); s.set_defaults(f=search)
 g = sub.add_parser("get"); g.add_argument("dir"); g.add_argument("items", nargs="+"); g.set_defaults(f=get)
 c = sub.add_parser("cut"); c.add_argument("src"); c.add_argument("out"); c.add_argument("--box")
 c.add_argument("--w", type=int, default=1600); c.add_argument("--q", type=int, default=88); c.set_defaults(f=cut)
+h = sub.add_parser("sheet"); h.add_argument("dir"); h.add_argument("--out"); h.set_defaults(f=sheet)
 a = ap.parse_args()
 a.f(a)

@@ -2,20 +2,23 @@
 """Voiceover in one call: generate every take, clean it, time it.
 
   python voice.py LINES_FILE [--out assets/voice] [--instructions "..."] [--voice Kore]
-                  [--model google/gemini-3.8-flash-lite-tts] [--tempo auto|1|1.1…]
+                  [--model google/gemini-3.8-flash-lite-tts] [--tempo auto|1.1|fit:45]
                   [--air 0.6] [--lead 0.2] [--only s3,s5] [--force]
 
 LINES_FILE: one take per line, `<scene-id> | <spoken text>` (blank lines and # comments skipped).
 Run from the film folder. Needs $OPENROUTER_API_KEY, ffmpeg, npx hyperframes.
 
 Steps: all takes requested in parallel (pcm 24 kHz -> wav) -> edge silence trimmed ->
-one tempo for the whole film (auto: speeds up a slow read toward 2.4 words/s, max 1.2x) ->
+one tempo for the whole film (auto: speeds up a slow read toward 2.4 words/s, max 1.2x;
+fit:45 = the tempo that makes the film ~45 s, within 0.9-1.25x) ->
 one transcription pass over all takes joined -> assets/voice/timings.json + a table:
-take length, words/s, word starts, and a suggested scene start/duration.
+take length, words/s, word starts inside the take, a suggested scene start/duration, and the
+`const VO = {...};` line for the film's script (cue = VO.<id> + word start).
+If index.html already has a VO line, retime.py runs on it: scenes, audio and the VO line follow the new takes.
 Existing wavs are reused unless --force or listed in --only (re-generate just those).
 A new --tempo re-times the existing wavs too (by the step from the stored tempo), nothing re-requested.
 """
-import argparse, concurrent.futures as cf, json, os, shutil, subprocess, sys, tempfile, time, wave
+import argparse, concurrent.futures as cf, json, os, re, shutil, subprocess, sys, tempfile, time, wave
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 URL = "https://openrouter.ai/api/v1/audio/speech"
@@ -96,7 +99,7 @@ def transcribe(ids, out):
     words = []
     for line in (r.stderr + "\n" + r.stdout).splitlines():  # the "words" event is on stderr
         if '"type":"words"' in line:
-            words = json.loads(line)["words"]
+            words += json.loads(line)["words"]  # long audio arrives in several events
     shutil.rmtree(tmp, ignore_errors=True)
     per = {sid: [] for sid in ids}
     for w in words:
@@ -146,7 +149,12 @@ def main():
     total_w, total_d = sum(nwords.values()), sum(dur(os.path.join(args.out, s + ".wav")) for s in ids)
     tpath = os.path.join(args.out, "timings.json")
     prev = json.load(open(tpath, encoding="utf-8")).get("tempo") if os.path.exists(tpath) else None
-    if args.tempo != "auto":
+    if args.tempo.startswith("fit:"):  # each take's length at 1x, then the tempo that lands the target
+        raw = sum(dur(os.path.join(args.out, s + ".wav")) * (1 if s in {t for t, _ in todo} else (prev or 1))
+                  for s in ids)
+        room = float(args.tempo[4:]) - len(ids) * (args.lead + args.air)
+        tempo = round(min(1.25, max(0.9, raw / room)), 2) if room > 0 else 1.25
+    elif args.tempo != "auto":
         tempo = float(args.tempo)
     elif prev and not args.force:
         tempo = prev  # re-generated takes match the ones already sped up
@@ -164,7 +172,7 @@ def main():
 
     words = transcribe(ids, args.out)
     timings, t = {}, 0.0
-    print(f"tempo {film_tempo}x ({len(todo)} new take(s)); start = scene start, vo = voice data-start\n")
+    print(f"tempo {film_tempo}x ({len(todo)} new take(s)); start = scene start, vo = voice data-start; word@t = t inside the take, cue at VO.<id> + t\n")
     for s in ids:
         d = round(dur(os.path.join(args.out, s + ".wav")), 2)
         scene = round(args.lead + d + args.air, 2)
@@ -179,6 +187,12 @@ def main():
     print(f"\ntotal {t:.2f}s (root data-duration if scenes run back to back)")
     with open(tpath, "w", encoding="utf-8") as f:
         json.dump({"tempo": film_tempo, "takes": timings}, f, ensure_ascii=False, indent=1)
+    if os.path.exists("index.html") and re.search(r"const VO = \{", open("index.html", encoding="utf-8").read()):
+        r = run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "retime.py")])
+        print((r.stdout + r.stderr).strip())
+    else:
+        vo = json.dumps({s: timings[s]["vo_start"] for s in ids})
+        print(f"for the film's script (cue = VO.<id> + word start): const VO = {vo};")
 
 
 if __name__ == "__main__":

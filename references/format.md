@@ -13,6 +13,11 @@ Only if a command fails and this file doesn't explain it: `npx hyperframes docs 
   {"id":"color-accent","type":"color","label":"Accent","default":"#E4572E"},
   {"id":"font-display","type":"string","label":"Display font","default":"Oswald"}
 ]'>
+<head>
+  <meta charset="utf-8">
+  <!-- GSAP is not injected: without this line every tween fails ("reading 'timeline'") -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+</head>
 <body>
   <div id="root" data-composition-id="main" data-start="0" data-duration="12"
        data-width="1920" data-height="1080">
