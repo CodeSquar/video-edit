@@ -1,6 +1,6 @@
 ---
 name: video-motion
-description: Genera o actualiza video/motion.md (ritmo, timing, easing, transiciones, texto en movimiento y prohibiciones) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el motion o el estilo de movimiento de los videos de un proyecto.
+description: Genera o actualiza video/motion.md (tokens de tiempo y easing, ritmo, coreografía, entradas y salidas, transiciones, texto en movimiento, cámara virtual, audio y sync, prohibiciones y animatic) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el motion o el estilo de movimiento de los videos de un proyecto.
 ---
 
 # Video Motion
@@ -21,6 +21,7 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
   - fps y duración: `ffprobe`.
   - Cortes: `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep pts_time` → duración media de plano.
   - Frames: `ffmpeg -i ref.mp4 -vf fps=4 video/refs/frames/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
+  - Audio: no se escucha, se mide. `ffmpeg -i ref.mp4 -vn video/refs/ref.wav` y `npx hyperframes audio video/refs/ref.wav --only onsets --json`; cruzá los onsets con los frames para ver qué acción dispara cada sonido. El tipo de sonido se infiere de la acción y va `(inferido)`.
 - **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca `(inferido)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/motion.md` existe, actualizalo y conservá lo que las referencias no contradigan.
@@ -33,6 +34,9 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
 - La evidencia y las mediciones van en tu respuesta, no en el archivo. Escribí la regla resultante ("plano medio 1.5 s, rango 0.4–3.5 s"), no la medición ("23 cortes en 34.9 s"). Los cambios que pidió el usuario se escriben como el valor final, sin "reemplaza X".
 - Valores concretos: ms o frames, curvas `cubic-bezier` o nombres GSAP (`power3.out`). Nunca "suave" o "dinámico" sin número.
 - Cada regla sale de la descripción, de las referencias o va marcada `(inferido)`. Una descripción vaga ("dinámico") se traduce a valores y se marca `(inferido)`.
+- **Tokens primero.** Tiempos y curvas se definen una vez como tokens con nombre; las demás secciones los usan por nombre, no repiten números.
+- **Cámara es solo la virtual**: lo que la composición controla (reencuadre digital sobre footage o imágenes, parallax de capas, cámara 3D). El movimiento propio del footage no se define acá.
+- **Sonido por función y carácter, nunca por archivo.** Escribí tipo genérico (acento corto, golpe, build, textura, música de fondo), carácter (seco, grave, brillante) y la acción que lo dispara. Nunca nombres de archivo, marcas ni fuentes de sonido. El archivo se elige al construir, solo de la librería de la skill; si ninguno encaja, ese cue va sin sonido.
 - Máximo ~80 líneas. Sin teoría.
 
 ## Formato de video/motion.md
@@ -41,21 +45,30 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
 # Motion
 
 ## Personalidad
-Una frase.
+Una frase + 2–3 principios (ej. "rápido pero legible").
 
 ## Formato
-- Plataforma: TikTok, Reels, Shorts, YouTube (una o varias)
-- Aspect ratio, fps, duración típica
-- Hook: qué pasa en 0–3s
+fps y plataforma(s).
+
+## Tokens de tiempo
+| Token | Frames | Uso |
+3–5 (ej. corte, micro, corto, medio, largo).
+
+## Tokens de easing
+| Token | Curva | Uso |
+3–4 (entrada, salida, movimiento, constante). Curvas `cubic-bezier` o GSAP.
 
 ## Ritmo
-- Duración media de plano/beat
+- Duración media de plano/beat y rango
 - Sincronía: cortes en beat, en palabra o libres
 - Hold mínimo para que algo se lea
 
+## Coreografía
+Orden de entrada (qué va primero), stagger en frames, un protagonista por vez, qué espera a qué.
+
 ## Entradas y salidas
-| Elemento | Entrada | Duración | Curva | Salida |
-Texto, imágenes/footage, UI, overlays. Stagger entre elementos.
+| Elemento | Entrada | Tiempo | Easing | Salida |
+Texto, imágenes/footage, UI, overlays. Tiempo y easing por token.
 
 ## Transiciones
 2–3 permitidas y cuándo usar cada una. Por defecto: corte seco.
@@ -63,14 +76,21 @@ Texto, imágenes/footage, UI, overlays. Stagger entre elementos.
 ## Texto en movimiento
 Palabra a palabra o bloque, palabras por vez, cómo se marca el énfasis con movimiento (el color lo define design.md).
 
+## Cámara
+Reencuadre digital, parallax o cámara 3D: movimiento, distancia, token. Si nada: "fija".
+
+## Audio y sync
+| Acción en pantalla | Tipo de sonido | Carácter | Volumen relativo |
+Más: qué marca el reloj (voz, beat o libre) y la música bajo la voz.
+
 ## Movimiento continuo
-Qué se mueve durante los holds o "nada".
+Qué se mueve durante los holds y loops, o "nada".
 
 ## Prohibido
 5–8 reglas concretas.
 
-## Ejemplo
-Un video de 15s plano a plano, con roles en vez de contenido: `0–1.5 s: [b-roll del tema] + título gancho con [marca] en caja; caption [palabra 1]`.
+## Animatic
+15 s plano a plano con roles en vez de contenido: `0–1.5 s: [b-roll del tema] + título gancho con [marca] en caja; caption [palabra 1]`.
 ```
 
 ## Prohibiciones por defecto
