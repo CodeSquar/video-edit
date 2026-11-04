@@ -21,14 +21,18 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos o fr
 - **Video**: sacá frames representativos con `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)'" -vsync vfr video/refs/frames/%03d.jpg` (uno por plano) y miralos.
 - **Colores**: medilos, no los adivines. `python3 -c "from PIL import Image;im=Image.open('video/refs/frames/001.jpg').convert('RGB').quantize(8);p=im.getpalette();print(['#%02x%02x%02x'%tuple(p[i*3:i*3+3]) for _,i in sorted(im.getcolors(),reverse=True)])"`
 - **DESIGN.md de raíz** (web): si existe, heredá marca (colores, fuentes) referenciando sus tokens por nombre. No copies valores. Las referencias de video mandan en todo lo demás.
-- Lo que no se ve directo se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
+- Lo que no se ve directo se infiere de lo que sí se ve y se marca `(inferido)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/design.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
+- **Gramática, no contenido.** El archivo vale para cualquier video del proyecto, sea cual sea el tema. Nunca nombres el tema de la ref, sus marcas, productos, objetos, set, personas ni palabras o frases dichas. Escribí el rol: "mano con celular" → "b-roll de manos con el objeto del tema"; "rojo Netflix" → "color real de la marca citada"; "recargo" → "palabra negativa"; "ladrillo, lámpara" → "set cálido con luz tungsteno".
+- Test por regla: si en un video sobre otro tema deja de tener sentido, está describiendo la ref. Abstraela o borrala.
+- Excepción: lo que es del proyecto y no de la ref (marca y fuentes del DESIGN.md de raíz, o el set propio si el usuario dice que las refs son sus videos).
+- La evidencia y las mediciones van en tu respuesta, no en el archivo. Escribí la regla resultante ("plano medio 1.5 s, rango 0.4–3.5 s"), no la medición ("23 cortes en 34.9 s"). Los cambios que pidió el usuario se escriben como el valor final, sin "reemplaza X".
 - Valores concretos: hex, px sobre 1080×1920 (o el formato del proyecto), pesos y tracking. Nunca "moderno" o "limpio" sin valor.
-- Cada regla sale de la descripción, de las referencias, del DESIGN.md de raíz o va marcada `(inferido: …)`. Una descripción vaga ("limpio") se traduce a valores y se marca `(inferido: …)`.
+- Cada regla sale de la descripción, de las referencias, del DESIGN.md de raíz o va marcada `(inferido)`. Una descripción vaga ("limpio") se traduce a valores y se marca `(inferido)`.
 - Las referencias ganan: si usan algo de la lista de prohibidos, se permite y se anota.
 - Máximo ~80 líneas. Sin teoría.
 
@@ -38,7 +42,7 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos o fr
 # Design
 
 ## Mundo visual
-Una frase.
+Una frase sobre el tratamiento (medio, luz, textura, tono). Ni el tema ni lo que se muestra.
 
 ## Paleta
 | Rol | Hex o token | Uso |
@@ -67,8 +71,8 @@ Caja, stroke, sombra, posición, cómo se ve la palabra enfatizada. Su movimient
 ## Prohibido
 5–8 reglas concretas.
 
-## Frame de referencia
-1–2 frames clave descritos con posiciones, tamaños y colores.
+## Frame tipo
+1–2 frames con placeholders (`[sujeto]`, `[palabra clave]`, `[marca]`, `[prueba]`), con posiciones, tamaños y colores. Nada de la ref.
 ```
 
 ## Piso de calidad
@@ -94,5 +98,7 @@ Incluilas salvo que las referencias las contradigan:
 - Modo claro u oscuro por categoría. Se elige por dónde y cómo se ve el video.
 
 ## Cierre
+
+Antes de guardar, buscá en el archivo nombres propios, marcas, objetos concretos y palabras entre comillas que vengan de la ref, y reemplazalos por su rol.
 
 Guardá el archivo y respondé con la frase de Mundo visual y 3 líneas de lo que lo define. No muestres el archivo entero salvo que lo pidan.
