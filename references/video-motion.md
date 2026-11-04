@@ -37,7 +37,7 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
 - **Tokens primero.** Tiempos y curvas se definen una vez como tokens con nombre; las demás secciones los usan por nombre, no repiten números.
 - **Cámara es solo la virtual**: lo que la composición controla (reencuadre digital sobre footage o imágenes, parallax de capas, cámara 3D). El movimiento propio del footage no se define acá.
 - **Sonido por función y carácter, nunca por archivo.** Escribí tipo genérico (acento corto, golpe, build, textura, música de fondo), carácter (seco, grave, brillante) y la acción que lo dispara. Nunca nombres de archivo, marcas ni fuentes de sonido. El archivo se elige al construir, solo de la librería de la skill; si ninguno encaja, ese cue va sin sonido.
-- Máximo ~80 líneas. Sin teoría.
+- Máximo ~100 líneas (las tablas suman). Sin teoría.
 
 ## Formato de video/motion.md
 
