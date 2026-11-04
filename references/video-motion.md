@@ -21,14 +21,18 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
   - fps y duración: `ffprobe`.
   - Cortes: `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep pts_time` → duración media de plano.
   - Frames: `ffmpeg -i ref.mp4 -vf fps=4 video/refs/frames/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
-- **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca con su origen: `(inferido: <evidencia>)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
+- **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca `(inferido)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si `video/motion.md` existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
+- **Gramática, no contenido.** El archivo vale para cualquier video del proyecto, sea cual sea el tema. Nunca nombres el tema de la ref, sus marcas, productos, objetos, set, personas ni palabras o frases dichas. Escribí el rol: "mano con celular" → "b-roll de manos con el objeto del tema"; "rojo Netflix" → "color real de la marca citada"; "recargo" → "palabra negativa"; "ladrillo, lámpara" → "set cálido con luz tungsteno".
+- Test por regla: si en un video sobre otro tema deja de tener sentido, está describiendo la ref. Abstraela o borrala.
+- Excepción: lo que es del proyecto y no de la ref (marca y fuentes del DESIGN.md de raíz, o el set propio si el usuario dice que las refs son sus videos).
+- La evidencia y las mediciones van en tu respuesta, no en el archivo. Escribí la regla resultante ("plano medio 1.5 s, rango 0.4–3.5 s"), no la medición ("23 cortes en 34.9 s"). Los cambios que pidió el usuario se escriben como el valor final, sin "reemplaza X".
 - Valores concretos: ms o frames, curvas `cubic-bezier` o nombres GSAP (`power3.out`). Nunca "suave" o "dinámico" sin número.
-- Cada regla sale de la descripción, de las referencias o va marcada `(inferido: …)`. Una descripción vaga ("dinámico") se traduce a valores y se marca `(inferido: …)`.
+- Cada regla sale de la descripción, de las referencias o va marcada `(inferido)`. Una descripción vaga ("dinámico") se traduce a valores y se marca `(inferido)`.
 - Máximo ~80 líneas. Sin teoría.
 
 ## Formato de video/motion.md
@@ -66,7 +70,7 @@ Qué se mueve durante los holds o "nada".
 5–8 reglas concretas.
 
 ## Ejemplo
-Un video de 15s descrito plano a plano con tiempos.
+Un video de 15s plano a plano, con roles en vez de contenido: `0–1.5 s: [b-roll del tema] + título gancho con [marca] en caja; caption [palabra 1]`.
 ```
 
 ## Prohibiciones por defecto
@@ -84,5 +88,7 @@ Incluilas salvo que las referencias las contradigan:
 Si las referencias se ven hechas a mano, agregá "motion en dos" (cada pose se sostiene 2 frames a 24fps).
 
 ## Cierre
+
+Antes de guardar, buscá en el archivo nombres propios, marcas, objetos concretos y palabras entre comillas que vengan de la ref, y reemplazalos por su rol.
 
 Guardá el archivo y respondé con la frase de Personalidad y 3 líneas de lo que lo define. No muestres el archivo entero salvo que lo pidan.
