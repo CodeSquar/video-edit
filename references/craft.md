@@ -93,7 +93,7 @@ Z rule: growing = push forward, shrinking = pull back. A shrinking exit answered
 - `npx hyperframes beats <track>`: frames per beat = fps × 60 / BPM. Compute each beat from its index and round — never add a rounded beat repeatedly (drifts). Trust beats only where `bpmConfidence` is high; on calm music cut on phrase/energy changes.
 - A move that must land on a hit starts 40–190 ms early; reactions start 0–45 ms after. The hit itself is a 0 ms `tl.set` — easing a hit kills it.
 - Enter the track at its strongest bar, not a quiet intro; end on a bar line with a short fade under the end card. Library loops (15–30 s): 0.4 s fade-in, 1.5 s fade-out.
-- Narrated: the voice is the clock. TTS ≈ 2.2 words/s; ≤ ~19 words (9 s) per scene. Reveal each piece when the voice names it, across the back half of the scene. Trim the script, never stretch the motion. Music under voice ≈ 0.14 volume.
+- Narrated: the voice is the clock. One idea per scene, short lines. Reveal each piece when the voice names it, across the back half of the scene. Trim the script, never stretch the motion. Music under voice ≈ 0.14 volume.
 - Effects 3–6 dB over the bed; a bed with energy under 150 Hz vanishes on phone speakers.
 
 ## Captions

@@ -11,7 +11,7 @@ Bundled scripts do the mechanical work; use them instead of writing your own loo
 
 | Script | Does, in one call |
 | --- | --- |
-| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json`, scene starts and the `const VO = {…};` line for cues (`references/voice-off.md`). A target length: `--tempo fit:45` on the first run. Once `index.html` has the VO line, every rerun (`--only s3`, new `--tempo`) also re-times the film itself (`retime.py`) |
+| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json`, scene starts and the `const VO = {…};` line for cues (`references/voice-off.md`). The tempo is a multiplier, 1.2x by default and never lower; the film's length is whatever the script gives, and a long film is fixed by cutting script, not by speeding the voice. Once `index.html` has the VO line, every rerun (`--only s3`, new `--tempo`) also re-times the film itself (`retime.py`) |
 | `<skill>/scripts/images.py search` / `get` / `cut` / `sheet DIR` | image search as one line per hit, parallel download that rejects HTML pages, crop → webp; `sheet` = a local folder as labelled contact sheets to Read in one message |
 | `<skill>/scripts/fonts.py "Family:700" "Family:italic:500"` | Google Fonts → `assets/fonts/*.woff2` + the `@font-face` lines to paste |
 | `<skill>/scripts/check.py` | `check` showing only what needs a decision (Work loop 5) |
