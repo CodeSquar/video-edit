@@ -2,15 +2,15 @@
 """Voiceover in one call: generate every take, clean it, time it.
 
   python voice.py LINES_FILE [--out assets/voice] [--instructions "..."] [--voice Kore]
-                  [--model google/gemini-3.8-flash-lite-tts] [--tempo auto|1.1|fit:45]
+                  [--model google/gemini-3.8-flash-lite-tts] [--tempo auto|1.25]
                   [--air 0.05] [--lead 0] [--only s3,s5] [--force]
 
 LINES_FILE: one take per line, `<scene-id> | <spoken text>` (blank lines and # comments skipped).
 Run from the film folder. Needs $OPENROUTER_API_KEY, ffmpeg, npx hyperframes.
 
 Steps: all takes requested in parallel (pcm 24 kHz -> wav) -> edge silence trimmed, inner pauses
-cut to 0.08 s -> one tempo for the whole film (auto: 1.2x;
-fit:45 = the tempo that makes the film ~45 s, within 0.9-1.25x) ->
+cut to 0.08 s -> one tempo for the whole film (a multiplier,
+never below 1.2x; auto = 1.2x; the film's length is a result, not a target) ->
 one transcription pass over all takes joined -> assets/voice/timings.json + a table:
 take length, words/s, word starts inside the take, a suggested scene start/duration, and the
 `const VO = {...};` line for the film's script (cue = VO.<id> + word start).
@@ -150,13 +150,8 @@ def main():
     nwords = {s: len(t.split()) for s, t in lines}
     tpath = os.path.join(args.out, "timings.json")
     prev = json.load(open(tpath, encoding="utf-8")).get("tempo") if os.path.exists(tpath) else None
-    if args.tempo.startswith("fit:"):  # each take's length at 1x, then the tempo that lands the target
-        raw = sum(dur(os.path.join(args.out, s + ".wav")) * (1 if s in {t for t, _ in todo} else (prev or 1))
-                  for s in ids)
-        room = float(args.tempo[4:]) - len(ids) * (args.lead + args.air)
-        tempo = round(min(1.25, max(0.9, raw / room)), 2) if room > 0 else 1.25
-    elif args.tempo != "auto":
-        tempo = float(args.tempo)
+    if args.tempo != "auto":
+        tempo = max(1.2, float(args.tempo))  # 1.2x is the floor
     elif prev and not args.force:
         tempo = prev  # re-generated takes match the ones already sped up
     else:
