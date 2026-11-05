@@ -1,6 +1,6 @@
 ---
 name: video-design
-description: Genera o actualiza video/design.md (paleta, tipografía, composición, fondos, look de captions y prohibiciones visuales) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el estilo visual de los videos de un proyecto.
+description: Genera o actualiza video/design.md (paleta, tipografía, grilla, tratamiento de imagen, texto sobre imagen, elementos gráficos, prohibiciones y style frames) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el estilo visual de los videos de un proyecto.
 ---
 
 # Video Design
@@ -31,8 +31,9 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos o fr
 - Test por regla: si en un video sobre otro tema deja de tener sentido, está describiendo la ref. Abstraela o borrala.
 - Excepción: lo que es del proyecto y no de la ref (marca y fuentes del DESIGN.md de raíz, o el set propio si el usuario dice que las refs son sus videos).
 - La evidencia y las mediciones van en tu respuesta, no en el archivo. Escribí la regla resultante ("plano medio 1.5 s, rango 0.4–3.5 s"), no la medición ("23 cortes en 34.9 s"). Los cambios que pidió el usuario se escriben como el valor final, sin "reemplaza X".
-- Valores concretos: hex, px sobre 1080×1920 (o el formato del proyecto), pesos y tracking. Nunca "moderno" o "limpio" sin valor.
+- Valores concretos: hex, px sobre la resolución en la que se van a hacer los videos (la del proyecto o la de la skill), pesos y tracking. Nunca "moderno" o "limpio" sin valor.
 - Cada regla sale de la descripción, de las referencias, del DESIGN.md de raíz o va marcada `(inferido)`. Una descripción vaga ("limpio") se traduce a valores y se marca `(inferido)`.
+- Tratamiento de imagen describe el material, no cómo filmarlo: no hay cámara. El footage lo trae el usuario o se busca; las reglas dicen cómo tiene que verse y qué se le aplica.
 - Las referencias ganan: si usan algo de la lista de prohibidos, se permite y se anota.
 - Máximo ~80 líneas. Sin teoría.
 
@@ -44,35 +45,42 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos o fr
 ## Mundo visual
 Una frase sobre el tratamiento (medio, luz, textura, tono). Ni el tema ni lo que se muestra.
 
+## Formato
+Resolución y aspect. Safe zones: las de la skill para la plataforma; solo anotá una excepción propia del proyecto.
+
 ## Paleta
 | Rol | Hex o token | Uso |
 Fondo, texto, acento (uno solo salvo que las refs muestren más), scrim.
+Proporción de uso (ej. 70 fondo / 20 texto / 10 acento) y combinaciones que no van.
 
 ## Tipografía
-- Familias y rol (display / caption / dato)
-- Tamaños en px, peso, tracking, mayúsculas o no
-- Máx palabras por línea y líneas por pantalla
+| Rol | Familia | Tamaño px | Peso | Tracking | Interlineado | Caja |
+4–6 roles (display, título, cuerpo, caption, dato). Máx palabras por línea y líneas por pantalla.
 
-## Composición
-- Punto focal y alineación dominante
-- Márgenes en px
-- Safe zones: las de la plataforma (no escribas números salvo una excepción propia del proyecto)
+## Grilla y layout
+- Márgenes, columnas y unidad de espaciado (ej. 8 px)
+- Alineación dominante y punto focal
+- Layouts recurrentes (pantalla completa, split, tarjeta…) con sus posiciones
 - Densidad: una idea por frame, salvo que las refs muestren más
 
-## Fondos y textura
-Sólido, footage, grano, viñeta. Cómo se garantiza contraste sobre footage (scrim, caja, stroke).
+## Tratamiento de imagen
+- Técnica: footage, 2D plano (HTML/CSS/SVG), ilustración, collage, 3D
+- Footage e imágenes: luz, grade y profundidad de campo que tienen que tener o que se les aplica
+- 3D: luz, materiales y lente virtual
+- Textura: grano, viñeta, ruido, o "ninguna"
+- Contraste sobre imagen: scrim, caja, sombra o stroke
 
-## Captions
-Caja, stroke, sombra, posición, cómo se ve la palabra enfatizada. Su movimiento va en motion.md.
+## Texto sobre imagen
+Captions, títulos, lower thirds: caja, stroke, sombra, posición y cómo se ve el énfasis. Su movimiento va en motion.md.
 
 ## Elementos gráficos
-Íconos (librería y grosor), formas, bordes, sombras, recortes de sujeto.
+Íconos (librería y grosor), formas, bordes, radios, sombras, recortes de sujeto, logos.
 
 ## Prohibido
 5–8 reglas concretas.
 
-## Frame tipo
-1–2 frames con placeholders (`[sujeto]`, `[palabra clave]`, `[marca]`, `[prueba]`), con posiciones, tamaños y colores. Nada de la ref.
+## Style frames
+2–3 frames clave con placeholders (`[sujeto]`, `[palabra clave]`, `[marca]`, `[prueba]`), con posiciones, tamaños y colores. Nada de la ref.
 ```
 
 ## Piso de calidad
