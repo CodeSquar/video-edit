@@ -9,7 +9,7 @@ Escribe `video/styles/<nombre>/motion.md`: cómo se mueve el video. No define co
 
 ## Entrada
 
-- **Carpeta**: escribí en `video/styles/<nombre>/`. Actualizando, el estilo que se nombra (o el que elige la regla de estilo de SKILL.md). Nuevo, el nombre que dé el usuario o uno corto y descriptivo del estilo (`cortes-secos`, no `nuevo` ni `default`).
+- **Carpeta**: escribí en `video/styles/<nombre>/`; los videos de referencia y todo lo que se extrae de ellos van en su `refs/`. Actualizando, el estilo que se nombra (o el que elige la regla de estilo de SKILL.md). Nuevo, el nombre que dé el usuario o uno corto y descriptivo del estilo (`cortes-secos`, no `nuevo` ni `default`).
 Lo que pase el usuario: una descripción del estilo y/o referencias (videos, preferido, o frames). Lo que describe manda; las referencias completan el resto.
 
 - Preguntá poco: una sola ronda al inicio, máximo 3 preguntas, solo lo que no se puede medir y cambia el archivo. Timing, easing y cortes se miden, no se preguntan.
@@ -21,8 +21,8 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
 - **Video**: el motion se mide, no se adivina.
   - fps y duración: `ffprobe`.
   - Cortes: `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)',showinfo" -f null - 2>&1 | grep pts_time` → duración media de plano.
-  - Frames: `ffmpeg -i ref.mp4 -vf fps=4 video/refs/frames/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
-  - Audio: no se escucha, se mide. `ffmpeg -i ref.mp4 -vn video/refs/ref.wav` y `npx hyperframes audio video/refs/ref.wav --only onsets --json`; cruzá los onsets con los frames para ver qué acción dispara cada sonido. El tipo de sonido se infiere de la acción y va `(inferido)`.
+  - Frames: `ffmpeg -i ref.mp4 -vf fps=4 video/styles/<nombre>/refs/frames/%03d.jpg`; mirá secuencias consecutivas para entradas, salidas, easing y texto. Subí a `fps=12` solo en tramos cortos que lo necesiten.
+  - Audio: no se escucha, se mide. `ffmpeg -i ref.mp4 -vn video/styles/<nombre>/refs/ref.wav` y `npx hyperframes audio video/styles/<nombre>/refs/ref.wav --only onsets --json`; cruzá los onsets con los frames para ver qué acción dispara cada sonido. El tipo de sonido se infiere de la acción y va `(inferido)`.
 - **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca `(inferido)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
 - Si el `motion.md` del estilo existe, actualizalo y conservá lo que las referencias no contradigan.
