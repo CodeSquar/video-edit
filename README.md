@@ -34,4 +34,4 @@ Ask for the video. Pick a storyline. Approve the preview. Render.
 
 ---
 
-One skill. Two references. No AI footage.
+One skill. A few references. No AI footage.

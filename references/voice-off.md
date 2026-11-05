@@ -4,13 +4,13 @@ Only when the person asked for a voiceover. The voice is the clock: write the li
 
 ## Script
 
-- As short as the idea allows: cut until nothing more can go without breaking the payoff. One idea per scene, short lines. No silence between lines: the next voice starts as the last one ends.
-- Write like a person: contractions, short lines mixed with longer ones. Read it aloud; if it sounds like a brochure, rewrite.
-- The first line creates tension (a claim, a question, a contrast, a number). Never "Welcome to…" / "Introducing…".
+What the voice says (hook, length, sounding human) belongs to the `video-script` skill: use it when installed, or the person's own script. Without either: as short as the idea allows, the first line already in the topic, no "Welcome to…" / "Introducing…". This section only turns those lines into takes.
+
+- One idea per scene, short lines. No silence between lines: the next voice starts as the last one ends.
 - Write each line as discrete cues ("first the snowball — then the hill — then the speed"), so each on-screen piece can land when the voice names it.
-- Write what the voice must say: TTS reads literally. `10x` → "ten times", `$1.9T` → "nearly two trillion dollars", `API` → "A P I", `acme.com` → "acme dot com". The screen shows the exact figure; the screen never repeats the spoken sentence word for word.
+- Write what the voice must say: TTS reads literally. `10x` → "ten times", `$1.9T` → "nearly two trillion dollars", `API` → "A P I", `acme.com` → "acme dot com". The screen shows the exact figure.
 - Silent scenes are fine: leave them out of the script.
-- A script the person pasted: keep their words; only split it into scene-sized lines at sentence or clause boundaries.
+- A script the person pasted or `video-script` wrote: keep its words; only split it into scene-sized lines at sentence or clause boundaries.
 
 Put the lines in `SPEC.md` under each shot (`VO: …`), one line per scene.
 
@@ -50,7 +50,7 @@ Another model that returns mp3 (e.g. MiniMax) is not covered by the script: call
 ## Place
 
 One `<audio>` per take in the root, `data-start` = its `vo_start`:
-`<audio id="vo-s1" class="clip" src="assets/voice/s1.wav" data-start="0.2" data-volume="1"></audio>`. Music under the voice ≈ 0.14 volume; mix with `npx hyperframes normalize-audio`.
+`<audio id="vo-s1" class="clip" src="assets/voice/s1.wav" data-start="0.2" data-volume="1"></audio>`. Music under the voice ≈ 0.14 volume. Reveal each on-screen piece when the voice names it, across the back half of its scene; trim the script, never stretch the motion.
 
 `data-start` stays a literal number in the HTML: the render mixes audio from the attributes as written, so a value set from JS is ignored for sound. In the script, cues go through the VO line:
 
@@ -64,4 +64,3 @@ tl.fromTo("#s2-count", { opacity: 0 }, { opacity: 1, duration: 0.15 }, VO.s2 + 1
 
 - The script marks a take whose transcribed word count is far from its line (`<- word count off`): a wrong read or spoken directions. Spell it out and rerun with `--only <id>`. Takes whose transcript has digits ("1994" for five spoken words) are not flagged.
 - Every scripted scene has its take; root `data-duration` covers the last take plus its air.
-- You can measure the audio (SKILL.md, Render), not hear it — say so.

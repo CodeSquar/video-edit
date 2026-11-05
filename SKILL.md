@@ -11,7 +11,7 @@ Bundled scripts do the mechanical work; use them instead of writing your own loo
 
 | Script | Does, in one call |
 | --- | --- |
-| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, trimmed, one tempo, transcribed in one pass → `assets/voice/timings.json`, scene starts and the `const VO = {…};` line for cues (`references/voice-off.md`). The tempo is a multiplier, 1.2x by default and never lower; the film's length is whatever the script gives, and a long film is fixed by cutting script, not by speeding the voice. Once `index.html` has the VO line, every rerun (`--only s3`, new `--tempo`) also re-times the film itself (`retime.py`) |
+| `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, `assets/voice/timings.json`, scene starts and the `const VO = {…};` line for cues; reruns also re-time the film (`references/voice-off.md`) |
 | `<skill>/scripts/images.py search` / `get` / `cut` / `sheet DIR` | image search as one line per hit, parallel download that rejects HTML pages, crop → webp; `sheet` = a local folder as labelled contact sheets to Read in one message |
 | `<skill>/scripts/fonts.py "Family:700" "Family:italic:500"` | Google Fonts → `assets/fonts/*.woff2` + the `@font-face` lines to paste |
 | `<skill>/scripts/check.py` | `check` showing only what needs a decision (Work loop 5) |
@@ -133,11 +133,12 @@ QA:      frames to check and what each must show
 | playful | springs at damping 0.45–0.6 on position/scale (never opacity/colour), 10–30% exaggeration |
 | cinematic | 35 mm framing, key upper-left, rim from behind, 6% vignette |
 
-**Look source, in order:** the project's `DESIGN.md`/`frame.md` (hex and fonts verbatim) → the real brand (`capture`) → a reference the person gave (take its grammar, not its content) → the subject's own world. A look holds when it is the rules of one **medium** (e.g. risograph: flat paper + fibre noise, ink A for all text, one fluorescent ink B, 3 px misregistration, halftone instead of gradients) — and motion comes from that medium too (printed, cut, pressed, refracted), not from fades.
+**Look source, in order:** the style's `design.md` / `motion.md` → the project's root `DESIGN.md`/`frame.md` (hex and fonts verbatim) → the real brand (`capture`) → a reference the person gave (take its grammar, not its content) → the subject's own world. A look holds when it is the rules of one **medium** (e.g. risograph: flat paper + fibre noise, ink A for all text, one fluorescent ink B, 3 px misregistration, halftone instead of gradients) — and motion comes from that medium too (printed, cut, pressed, refracted), not from fades.
 
 ## Taste: the rules that matter most
 
 **Composition**
+- Contrast: text ≥4.5:1, large text ≥3:1, against the worst frame of the footage, not the average.
 - The hero fills ≥40% of the frame's height or width. A small thing in an empty middle is never a shot — push in, crop, or give it a world.
 - One hero move per shot. Secondary moves travel 50–70% as far and start 100–200 ms later; the rest holds still.
 - Something new every 2–4 s. Readable text ≥28 px at 1080 (2.6% of the short side), held 0.5 s + 0.3 s per word; the last line ≥2 s. Too many words: cut words, never shrink type.
@@ -154,12 +155,12 @@ QA:      frames to check and what each must show
 
 **Story** (any film that tells something)
 - One thing to remember, one viewer doing one real task, one real piece of data travelling from hook to payoff.
-- Frame 0 is the thumbnail: never black, never a logo alone. It holds at most two things to look at: one text block (the hook line, big, ≤2 lines, one accent, not a caption of the voice) and one hero visual (image, result or person). A person behind a centred image counts as ground, not a third thing. Captions, subtitles, source lines and second accents wait for the first cut: a viewer deciding in under a second needs one place to look. No visual for the hook → find or build one; never fill the frame with more text.
+- Frame 0 is the thumbnail and already shows the hook: never black, never a logo alone. It holds at most two things to look at: one text block (the hook line, big, ≤2 lines, one accent, not a caption of the voice) and one hero visual (image, result or person). A person behind a centred image counts as ground, not a third thing. Captions, subtitles, source lines and second accents wait for the first cut: a viewer deciding in under a second needs one place to look. No visual for the hook → find or build one; never fill the frame with more text.
 - Real UI and real numbers from the source, never a mockup or an invented stat; a missing screen is a labelled placeholder.
 - The brand mark lands once, with weight, on a built end card — never docked in a corner.
 - Copy bans: "Introducing" as the first line, "unlock", "seamless", "supercharge", "game-changer", "revolutionize", "effortless", unmeasured "in seconds".
 
-**Sound:** every film gets exact effects on visible actions (see Project); a film over ~15 s also gets a music bed. Mix ≈ −14 to −16 LUFS, peaks ≤ −1 dBTP (`npx hyperframes normalize-audio`). No music source → deliver with effects only and say so.
+**Sound:** every film gets exact effects on visible actions (see Project); a film over ~15 s also gets a music bed. Loudness targets: Work loop 8. No music source → deliver with effects only and say so.
 
 ## BANNED by default
 
@@ -167,14 +168,17 @@ Allowed only when the brand or the person's reference uses it, and only as they 
 
 - dark/navy void ground with small elements floating in the middle;
 - glow, bloom, neon, lens flares, orbs, rings, decorative particles;
-- purple/blue gradients, mesh gradients, glass cards;
+- purple/blue gradients, mesh gradients, glass cards, glass or blur as decoration;
 - cream paper + serif display + italic accent word + "01 / 02" labels + mono caps labels + pill chips;
 - everything centred; everything fading in at once; every element fading and sliding up;
-- text that moves while read; titles drifting or scaling after they land; breathing/floating/pulsing loops on titles or UI; bounce on UI; click rings;
+- text that moves while read; breathing/floating/pulsing loops on titles or UI; bounce on UI; click rings; typewriter letter by letter; 3D rotations or zooms with no cause;
+- gradient text; a coloured halo with no offset behind text (shadows have offset and soft blur);
+- emoji or unicode glyphs instead of icons; circles or polygons as masks to cut out a subject (a real matte or no cutout);
+- a small kicker label above a title; 01 / 02 numbering unless the sequence matters; grey secondary text on colour (use a tint of the colour or the ink); light or dark mode picked by category instead of by where the video is seen;
 - corner labels, frame borders, corner brackets, HUD readouts as decoration;
-- three cards in a row, KPI grids, a title over a dimmed screenshot, bullet slides, icons in circles;
+- three cards in a row, scenes built as equal icon + title + text cards, KPI grids, a title over a dimmed screenshot, bullet slides, icons in circles;
 - typing into a prompt box as the opener; the logo docked in a corner;
-- Inter / Space Grotesk / Instrument Serif / Geist / JetBrains Mono as the *default* choice (fine when the brand uses them).
+- Inter / Space Grotesk / Instrument Serif / Geist / JetBrains Mono as the *default* choice (fine when the brand uses them); a system font or Impact/Arial Black as display.
 
 After each render, name every default it used anyway (listed or not), add it to `SPEC.md` BANNED (when there is one) and fix it. The list grows per film.
 
@@ -193,5 +197,20 @@ Be a harsh motion director, not a proud author.
 | --- | --- |
 | Writing HTML: skeleton, attributes, variables, fonts, media, lint fixes, other runtimes (canvas/Three/Lottie) | `references/format.md` |
 | Storylines, beats per film type, transitions catalog, captions, cards over footage, music timing, data/explainer/vertical/launch specifics | `references/craft.md` |
-| Voiceover: script, generating takes (OpenRouter TTS), timing scenes to the voice | `references/voice-off.md` |
-| A style's `motion.md` (how its videos move) or `design.md` (how each frame looks) is missing, the person asks for a new style, or to rewrite/change one. Otherwise just read the existing files and follow them | `references/video-motion.md` / `references/video-design.md` |
+| Voiceover: lines into takes (OpenRouter TTS), timing scenes to the voice | `references/voice-off.md` |
+| A style's `motion.md` (how its videos move) or `design.md` (how each frame looks) is missing, the person asks for a new style, or to rewrite/change one. Otherwise just read the existing files and follow them | `references/style.md` |
+
+## Where each rule lives
+
+Each rule is written once, in its owner; everywhere else points to it. Adding or changing a rule: put it in the row whose question it answers, and delete any copy elsewhere.
+
+| File | Answers | Never holds |
+| --- | --- | --- |
+| `video-script` skill | what is **said** (spoken lines, the spoken hook) | anything on screen |
+| this `SKILL.md` | how **any** film is made: contract, work loop, universal taste, BANNED | a brand's hex, fonts or px |
+| `references/*.md` | the **detail** of something this file names | a new rule, or one that contradicts this file |
+| style `design.md` | how **this style's** frames look: palette, type, layout, style frames | timing; rules this file already gives |
+| style `motion.md` | **when and how** this style moves: rhythm, entries, sound | colour, size, position (that is `design.md`) |
+| project `CLAUDE.md` / `AGENTS.md` | setup: default style, voice, image folders | design or motion rules |
+
+When they clash: what the person asks → the style files → this file's defaults. The Contract is never overridden. A style may be stricter than this file or allow a BANNED item its references use; it never restates this file.

@@ -1,6 +1,6 @@
 # Craft
 
-Measured defaults. A reference the person gave, or a beat that breaks a rule on purpose, wins.
+Measured detail for what `SKILL.md` names; it adds no rule of its own. A reference the person gave, or a beat that breaks a rule on purpose, wins.
 
 ## Story
 
@@ -37,7 +37,7 @@ Skip for edits, captions/overlays on footage, and single-idea pieces (one kineti
 
 **Worlds:** several worlds with their own ground, light and scale — never one dark canvas with small UI floating. Enter each through an object on screen. Keep one home stage, one carrier the eye follows, palette and type constant.
 
-**Copy:** read the lines alone — a stranger gets it; watch the pictures alone — same story. No voiceover unless asked; then the screen never repeats the spoken sentence verbatim.
+**Copy:** read the lines alone — a stranger gets it; watch the pictures alone — same story. With a voiceover, the screen never repeats the spoken sentence verbatim.
 
 ## Motion details
 
@@ -83,8 +83,8 @@ Z rule: growing = push forward, shrinking = pull back. A shrinking exit answered
 
 - **Launch/promo (20–45 s):** real UI, never a mockup — the person's recordings/screenshots, Figma frames, `capture`. Rebuild only the piece the beat uses at 1.6–2× real size (text ≥26 px after any push); never a small window in an empty canvas, never product UI tilted in 3D. Camera cycles window → pane → punch-in on one control (0.4–0.6 s moves, then hold while the UI acts). Containers morph instead of cutting. Cursor 4–7% of frame, enters from off-screen, its click causes the next thing on the same frame. End card: mark lands in the last 5–10%, lockup 15–30% of width, performed (clicked, carried, wiped) not faded; CTA holds 1.5–3 s.
 - **Explainer (30–90 s):** start where the viewer is (a person, a situation, a question); the device enters as the answer; return to the person at the end. One diagram that grows a part per beat, each part appearing when named; continuous morphs over cuts; one worked example. Labels sit on the part, no legends. End on the idea in one line.
-- **Data:** one number at a time, the biggest thing on screen, `font-variant-numeric: tabular-nums`, count-up 1.2–1.6 s then hold, source line on screen (never on the hook frame). Charts build in reading order: axis → reference line → data drawing in → one annotation on the point that matters. Highlight one series, grey the rest. Tells: KPI grids, dashboards, pies, everything counting at once.
-- **Vertical 9:16 (1080×1920):** recompose, don't squeeze. Safe box for Reels and TikTok together: words, faces, product and CTA inside x 65–940, y 270–1250 px. Top 270 px (14%): Reels header, TikTok tabs/search. Bottom 670 px (35%): username, caption (grows with its length), audio, CTA button. Right 140 px: the like/comment/share/save rail on both. Left 65 px (6%). Outside the box only footage, background and texture. Frame 0 = hook: one bold line + one visual (face, image or result), nothing else. Type ×1.35, ≤5 English words per claim line. Shots 1–2 s, new beat every 2–4 s, captions for muted viewing.
+- **Data:** one number at a time, the biggest thing on screen, `font-variant-numeric: tabular-nums`, count-up 1.2–1.6 s then hold, source line on screen. Charts build in reading order: axis → reference line → data drawing in → one annotation on the point that matters. Highlight one series, grey the rest. Tells: KPI grids, dashboards, pies, everything counting at once.
+- **Vertical 9:16 (1080×1920):** recompose, don't squeeze. Safe box: `SKILL.md` Contract 10; frame 0: `SKILL.md` Story. Type ×1.35, ≤5 English words per claim line. Shots 1–2 s.
 - **Music:** song sections are chapters (`npx hyperframes audio <track> --only sections,onsets,moments --json`). Slower shots in verses, one picture per strong beat in the chorus, held image on a breakdown. Each lyric line gets a picture of what it means (1.4–4 s). Tells: one treatment >6 s, a waveform as the main picture, cutting on every beat.
 - **Kinetic type:** 3–7 words per scene. Highlighter across lines: tween a custom property on a `background-size` band with `box-decoration-break: clone`.
 
@@ -93,13 +93,12 @@ Z rule: growing = push forward, shrinking = pull back. A shrinking exit answered
 - `npx hyperframes beats <track>`: frames per beat = fps × 60 / BPM. Compute each beat from its index and round — never add a rounded beat repeatedly (drifts). Trust beats only where `bpmConfidence` is high; on calm music cut on phrase/energy changes.
 - A move that must land on a hit starts 40–190 ms early; reactions start 0–45 ms after. The hit itself is a 0 ms `tl.set` — easing a hit kills it.
 - Enter the track at its strongest bar, not a quiet intro; end on a bar line with a short fade under the end card. Library loops (15–30 s): 0.4 s fade-in, 1.5 s fade-out.
-- Narrated: the voice is the clock. One idea per scene, short lines. Reveal each piece when the voice names it, across the back half of the scene. Trim the script, never stretch the motion. Music under voice ≈ 0.14 volume.
 - Effects 3–6 dB over the bed; a bed with energy under 150 Hz vanishes on phone speakers.
 
 ## Captions
 
 - Words: `npx hyperframes transcribe <file> --model small.en --json` (English) or `--model small --language <code>` (default model *translates* to English). Read the transcript: drop words inside a final silence (whisper invents "Thank you."), drop `♪`/`�` tokens; >20% garbage = failed.
-- Groups: 2–3 words high energy, 3–5 conversational, 4–6 calm; break at sentence end, a ≥150 ms pause, or the limit. One group visible at a time; first caption 0.1–0.3 s in, not at 0.
+- Groups: 2–3 words high energy, 3–5 conversational, 4–6 calm; break at sentence end, a ≥150 ms pause, or the limit. One group visible at a time; the first caption comes after the hook frame (`SKILL.md` Story), never at 0.
 - Hard-kill every group: `tl.to(g,{opacity:0,duration:0.12,ease:"power2.in"},end-0.12); tl.set(g,{opacity:0,visibility:"hidden"},end);`
 - Size with `fitTextFontSize` (maxWidth 1600 landscape / 900 portrait, base 78, min 42). Full-width absolute container with centred text — never `left:50%; translateX(-50%)`. `overflow: visible`. Landscape 80–120 px from bottom; portrait ~600–700 px from bottom; never over the face.
 - Fade the group or its words, not both. Over footage brightness (0–255): <60 `screen`, 60–180 `overlay`, >180 normal opaque; plain subtitles over >60 get a text-sized 30–40% scrim, never a full-width bar.
