@@ -10,7 +10,7 @@ What the voice says (hook, length, sounding human) belongs to the `video-script`
 - Write each line as discrete cues ("first the snowball — then the hill — then the speed"), so each on-screen piece can land when the voice names it.
 - Write what the voice must say: TTS reads literally. `10x` → "ten times", `$1.9T` → "nearly two trillion dollars", `API` → "A P I", `acme.com` → "acme dot com". The screen shows the exact figure.
 - Silent scenes are fine: leave them out of the script.
-- A script the person pasted or `video-script` wrote: keep its words; only split it into scene-sized lines at sentence or clause boundaries.
+- A script already written (pasted by the person, or from `video-script`): keep its words; only split it into scene-sized lines at sentence or clause boundaries.
 
 Put the lines in `SPEC.md` under each shot (`VO: …`), one line per scene.
 

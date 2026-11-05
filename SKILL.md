@@ -206,11 +206,13 @@ Each rule is written once, in its owner; everywhere else points to it. Adding or
 
 | File | Answers | Never holds |
 | --- | --- | --- |
-| `video-script` skill | what is **said** (spoken lines, the spoken hook) | anything on screen |
+| the spoken script (the `video-script` skill, if installed; otherwise the person or `references/voice-off.md`) | what is **said** (spoken lines, the spoken hook) | anything on screen |
 | this `SKILL.md` | how **any** film is made: contract, work loop, universal taste, BANNED | a brand's hex, fonts or px |
 | `references/*.md` | the **detail** of something this file names | a new rule, or one that contradicts this file |
 | style `design.md` | how **this style's** frames look: palette, type, layout, style frames | timing; rules this file already gives |
 | style `motion.md` | **when and how** this style moves: rhythm, entries, sound | colour, size, position (that is `design.md`) |
 | project `CLAUDE.md` / `AGENTS.md` | setup: default style, voice, image folders | design or motion rules |
+
+Another skill is named by its role and as "if installed": each skill works on its own.
 
 When they clash: what the person asks → the style files → this file's defaults. The Contract is never overridden. A style may be stricter than this file or allow a BANNED item its references use; it never restates this file.
