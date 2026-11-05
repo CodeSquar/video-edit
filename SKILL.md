@@ -26,7 +26,7 @@ Everything lives under one `video/` folder at the repo root:
 
 ```
 video/
-  motion.md, design.md    shared style for every film
+  styles/<name>/          one video style per folder: design.md + motion.md
   refs/                   references, extracted frames, capture output
   components/*.html       pieces reused across films (character, product, logo)
   films/<name>/           one HyperFrames project per film:
@@ -39,7 +39,9 @@ video/
 
 Preview and render use these same files: write in this format from the start, view with `npx hyperframes preview`. Never write your own player or a separate preview HTML.
 
-Other films are off-limits: never list, open, snapshot, play or copy anything in another `video/films/<name>/` (HTML, SPEC, assets, renders) as a reference — they bias the new film toward an old one. What films share comes only from `motion.md`, `design.md` and `components/`; anything else (content logs, notes, `refs/`) is fine to read. Only open a film when it is the one you are editing.
+Other films are off-limits: never list, open, snapshot, play or copy anything in another `video/films/<name>/` (HTML, SPEC, assets, renders) as a reference — they bias the new film toward an old one. What films share comes only from the style's `motion.md` / `design.md` and `components/`; anything else (content logs, notes, `refs/`) is fine to read. Only open a film when it is the one you are editing.
+
+Style, in order: (1) the one the person names; (2) the default named in the project's `CLAUDE.md` or `AGENTS.md`; (3) if `video/styles/` has only one, that one; with several, ask once which, and offer to save the answer as the default in `CLAUDE.md` or `AGENTS.md` (their pick). In an automated session (no one to answer, or "no stops"), don't ask: take the style changed most recently (`git log -1 --format=%ct -- video/styles/<name>`) and say which in your reply. Write the style used in the film's `SPEC.md` (`STYLE:`); edits to that film keep it.
 
 New project: `HYPERFRAMES_SKIP_SKILLS=1 npx hyperframes init video/films/<name> && cd video/films/<name> && rm -f CLAUDE.md AGENTS.md && mkdir -p assets/img assets/sfx assets/fonts assets/voice renders` (the env var stops init installing the upstream skills; the `rm` drops the files that point to them). Init's `index.html` is a 1920×1080 placeholder: don't read it, overwrite it with your first pass. A website as the subject: `npx hyperframes capture <url> --json` (screenshots, copy, logos, `extracted/tokens.json`), output into `video/refs/`. Code shapes, attributes and lint fixes: `references/format.md`.
 
@@ -49,7 +51,7 @@ Images and b-roll: always use them without asking, unless the person or the proj
 3. Look only at the ones that landed (Read them in one message): no watermarks, edited variants or low resolution.
 4. `python <skill>/scripts/images.py cut SRC assets/img/x.webp --box x0,y0,x1,y1 --w 1600` for each one you use (crop in source px; omit `--box` to keep the frame). Only those go into `assets/img/`.
 
-Fonts the design names that HyperFrames doesn't bundle (`references/format.md`, Fonts): `python <skill>/scripts/fonts.py "Archivo:700" "Newsreader:italic:500"` in the film folder, then paste the `@font-face` lines it prints. How many, how long and how they enter is not fixed: infer it from the film's style and `video/motion.md` / `video/design.md`.
+Fonts the design names that HyperFrames doesn't bundle (`references/format.md`, Fonts): `python <skill>/scripts/fonts.py "Archivo:700" "Newsreader:italic:500"` in the film folder, then paste the `@font-face` lines it prints. How many, how long and how they enter is not fixed: infer it from the film's style and its `motion.md` / `design.md`.
 
 Sound effects: every film has them, music or not, unless the person says no. Take them only from this skill's `assets/sfx/<name>.mp3` (not from other skills). The table is the whole library, durations included, so no `manifest.json` read and no `ffprobe`:
 
@@ -106,6 +108,7 @@ Adjectives are where the default look hides. Every one you turn into a number is
 
 ```
 GOAL:    what the viewer feels or does at the end, one sentence
+STYLE:   video/styles/<name>/
 OUTPUT:  W x H, fps
 TIME:    seconds x fps = frames; BPM and frames-per-beat if music
 LOOK:    ground (hex + texture %), ink, ONE accent and where it may appear;
@@ -190,4 +193,4 @@ Be a harsh motion director, not a proud author.
 | Writing HTML: skeleton, attributes, variables, fonts, media, lint fixes, other runtimes (canvas/Three/Lottie) | `references/format.md` |
 | Storylines, beats per film type, transitions catalog, captions, cards over footage, music timing, data/explainer/vertical/launch specifics | `references/craft.md` |
 | Voiceover: script, generating takes (OpenRouter TTS), timing scenes to the voice | `references/voice-off.md` |
-| `video/motion.md` (how the project's videos move) or `video/design.md` (how each frame looks) is missing, or the person asks to rewrite/change it. Otherwise just read the existing files and follow them | `references/video-motion.md` / `references/video-design.md` |
+| A style's `motion.md` (how its videos move) or `design.md` (how each frame looks) is missing, the person asks for a new style, or to rewrite/change one. Otherwise just read the existing files and follow them | `references/video-motion.md` / `references/video-design.md` |

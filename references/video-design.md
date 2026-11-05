@@ -1,14 +1,15 @@
 ---
 name: video-design
-description: Genera o actualiza video/design.md (paleta, tipografía, grilla, tratamiento de imagen, texto sobre imagen, elementos gráficos, prohibiciones y style frames) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el estilo visual de los videos de un proyecto.
+description: Genera o actualiza video/styles/<nombre>/design.md (paleta, tipografía, grilla, tratamiento de imagen, texto sobre imagen, elementos gráficos, prohibiciones y style frames) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el estilo visual de los videos de un proyecto.
 ---
 
 # Video Design
 
-Escribe `video/design.md`: cómo se ve cada frame. No define tiempos, easing, transiciones ni ritmo; eso es `video/motion.md`.
+Escribe `video/styles/<nombre>/design.md`: cómo se ve cada frame. No define tiempos, easing, transiciones ni ritmo; eso es el `motion.md` del mismo estilo.
 
 ## Entrada
 
+- **Carpeta**: escribí en `video/styles/<nombre>/`. Actualizando, el estilo que se nombra (o el que elige la regla de estilo de SKILL.md). Nuevo, el nombre que dé el usuario o uno corto y descriptivo del estilo (`cortes-secos`, no `nuevo` ni `default`).
 Lo que pase el usuario: una descripción del estilo y/o referencias (videos o frames). Lo que describe manda; las referencias completan el resto.
 
 - Preguntá poco: una sola ronda al inicio, máximo 3 preguntas, solo lo que no se puede medir y cambia el archivo. Colores, tamaños y márgenes se miden, no se preguntan.
@@ -16,14 +17,14 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos o fr
   - Fuente o logo de marca que no se puede identificar o no está en `assets/fonts/`: pedí los archivos. Sin ellos, usá una parecida y anotalo.
   - Referencias con estilos distintos: preguntá cuál manda.
   - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
-  - Si también falta `video/motion.md`, una sola ronda para los dos.
+  - Si también falta el `motion.md` del estilo, una sola ronda para los dos.
   - Nunca preguntes lo que ya dice el DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay.
 - **Video**: sacá frames representativos con `ffmpeg -i ref.mp4 -vf "select='gt(scene,0.3)'" -vsync vfr video/refs/frames/%03d.jpg` (uno por plano) y miralos.
 - **Colores**: medilos, no los adivines. `python3 -c "from PIL import Image;im=Image.open('video/refs/frames/001.jpg').convert('RGB').quantize(8);p=im.getpalette();print(['#%02x%02x%02x'%tuple(p[i*3:i*3+3]) for _,i in sorted(im.getcolors(),reverse=True)])"`
 - **DESIGN.md de raíz** (web): si existe, heredá marca (colores, fuentes) referenciando sus tokens por nombre. No copies valores. Las referencias de video mandan en todo lo demás.
 - Lo que no se ve directo se infiere de lo que sí se ve y se marca `(inferido)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
-- Si `video/design.md` existe, actualizalo y conservá lo que las referencias no contradigan.
+- Si el `design.md` del estilo existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
@@ -37,7 +38,7 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos o fr
 - Las referencias ganan: si usan algo de la lista de prohibidos, se permite y se anota.
 - Máximo ~80 líneas. Sin teoría.
 
-## Formato de video/design.md
+## Formato de design.md
 
 ```md
 # Design
