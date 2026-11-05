@@ -1,21 +1,22 @@
 ---
 name: video-motion
-description: Genera o actualiza video/motion.md (tokens de tiempo y easing, ritmo, coreografía, entradas y salidas, transiciones, texto en movimiento, cámara virtual, audio y sync, prohibiciones y animatic) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el motion o el estilo de movimiento de los videos de un proyecto.
+description: Genera o actualiza video/styles/<nombre>/motion.md (tokens de tiempo y easing, ritmo, coreografía, entradas y salidas, transiciones, texto en movimiento, cámara virtual, audio y sync, prohibiciones y animatic) a partir de una descripción o de videos o frames de referencia. Usar cuando el usuario pase referencias y pida definir el motion o el estilo de movimiento de los videos de un proyecto.
 ---
 
 # Video Motion
 
-Escribe `video/motion.md`: cómo se mueve el video. No define colores, fuentes ni layout; eso es `video/design.md`. Si una regla depende de algo visual, referenciá design.md en vez de copiar valores.
+Escribe `video/styles/<nombre>/motion.md`: cómo se mueve el video. No define colores, fuentes ni layout; eso es el `design.md` del mismo estilo. Si una regla depende de algo visual, referenciá design.md en vez de copiar valores.
 
 ## Entrada
 
+- **Carpeta**: escribí en `video/styles/<nombre>/`. Actualizando, el estilo que se nombra (o el que elige la regla de estilo de SKILL.md). Nuevo, el nombre que dé el usuario o uno corto y descriptivo del estilo (`cortes-secos`, no `nuevo` ni `default`).
 Lo que pase el usuario: una descripción del estilo y/o referencias (videos, preferido, o frames). Lo que describe manda; las referencias completan el resto.
 
 - Preguntá poco: una sola ronda al inicio, máximo 3 preguntas, solo lo que no se puede medir y cambia el archivo. Timing, easing y cortes se miden, no se preguntan.
   - Sin descripción ni referencias: pedí 1–3 videos (no frames).
   - Referencias con estilos distintos: preguntá cuál manda.
   - Plataforma o formato que no coincide con las referencias o el proyecto: preguntá cuál es.
-  - Si también falta `video/design.md`, una sola ronda para los dos.
+  - Si también falta el `design.md` del estilo, una sola ronda para los dos.
   - Nunca preguntes lo que ya dice el DESIGN.md de raíz. Sin respuesta, persona ausente o "sin paradas": seguí con lo que hay.
 - **Video**: el motion se mide, no se adivina.
   - fps y duración: `ffprobe`.
@@ -24,7 +25,7 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
   - Audio: no se escucha, se mide. `ffmpeg -i ref.mp4 -vn video/refs/ref.wav` y `npx hyperframes audio video/refs/ref.wav --only onsets --json`; cruzá los onsets con los frames para ver qué acción dispara cada sonido. El tipo de sonido se infiere de la acción y va `(inferido)`.
 - **Solo frames**: deducí lo que se ve (densidad, motion blur, cómo aparece el texto). Lo que no se puede ver se infiere de lo que sí se ve y se marca `(inferido)`. Si no hay de dónde inferirlo, escribí "Sin regla: se decide por video"; nunca rellenes con un valor genérico.
 - Referencias con estilos distintos y sin respuesta: tomá el dominante, no mezcles.
-- Si `video/motion.md` existe, actualizalo y conservá lo que las referencias no contradigan.
+- Si el `motion.md` del estilo existe, actualizalo y conservá lo que las referencias no contradigan.
 
 ## Reglas al escribir
 
@@ -39,7 +40,7 @@ Lo que pase el usuario: una descripción del estilo y/o referencias (videos, pre
 - **Sonido por función y carácter, nunca por archivo.** Escribí tipo genérico (acento corto, golpe, build, textura, música de fondo), carácter (seco, grave, brillante) y la acción que lo dispara. Nunca nombres de archivo, marcas ni fuentes de sonido. El archivo se elige al construir, solo de la librería de la skill; si ninguno encaja, ese cue va sin sonido.
 - Máximo ~100 líneas (las tablas suman). Sin teoría.
 
-## Formato de video/motion.md
+## Formato de motion.md
 
 ```md
 # Motion
