@@ -91,7 +91,7 @@ Qué se mueve durante los holds y loops, o "nada".
 5–8 reglas concretas.
 
 ## Animatic
-15 s plano a plano con roles en vez de contenido: `0–1.5 s: [b-roll del tema] + título gancho con [marca] en caja; caption [palabra 1]`.
+15 s plano a plano con roles en vez de contenido: `0–1.5 s: [b-roll del tema] + título gancho con [marca] en caja; sin caption`.
 ```
 
 ## Prohibiciones por defecto
@@ -102,6 +102,7 @@ Incluilas salvo que las referencias las contradigan:
 - Bounce o elastic.
 - Glow pulsante.
 - Primer frame vacío o hook después de 1s.
+- Captions de la voz en el frame del gancho (arrancan en el primer corte).
 - Todo entrando con el mismo fade-up.
 - Todos los elementos animando a la vez.
 - Rotaciones 3D o zooms sin motivo.

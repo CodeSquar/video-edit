@@ -81,7 +81,7 @@ Captions, títulos, lower thirds: caja, stroke, sombra, posición y cómo se ve 
 5–8 reglas concretas.
 
 ## Style frames
-2–3 frames clave con placeholders (`[sujeto]`, `[palabra clave]`, `[marca]`, `[prueba]`), con posiciones, tamaños y colores. Nada de la ref.
+2–3 frames clave con placeholders (`[sujeto]`, `[palabra clave]`, `[marca]`, `[prueba]`), con posiciones, tamaños y colores. Nada de la ref. El frame del gancho lleva máx 2 elementos: 1 bloque de texto + 1 visual protagonista.
 ```
 
 ## Piso de calidad

@@ -154,7 +154,7 @@ QA:      frames to check and what each must show
 
 **Story** (any film that tells something)
 - One thing to remember, one viewer doing one real task, one real piece of data travelling from hook to payoff.
-- Frame 0 is the thumbnail: never black, never a logo alone. The first 2 s are the densest.
+- Frame 0 is the thumbnail: never black, never a logo alone. It holds at most two things to look at: one text block (the hook line, big, ≤2 lines, one accent, not a caption of the voice) and one hero visual (image, result or person). A person behind a centred image counts as ground, not a third thing. Captions, subtitles, source lines and second accents wait for the first cut: a viewer deciding in under a second needs one place to look. No visual for the hook → find or build one; never fill the frame with more text.
 - Real UI and real numbers from the source, never a mockup or an invented stat; a missing screen is a labelled placeholder.
 - The brand mark lands once, with weight, on a built end card — never docked in a corner.
 - Copy bans: "Introducing" as the first line, "unlock", "seamless", "supercharge", "game-changer", "revolutionize", "effortless", unmeasured "in seconds".
