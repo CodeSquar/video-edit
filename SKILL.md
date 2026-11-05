@@ -27,7 +27,8 @@ Everything lives under one `video/` folder at the repo root:
 ```
 video/
   styles/<name>/          one video style per folder: design.md + motion.md
-  refs/                   references, extracted frames, capture output
+    refs/                 that style's reference videos and extracted frames
+  refs/                   capture output and references not tied to a style
   components/*.html       pieces reused across films (character, product, logo)
   films/<name>/           one HyperFrames project per film:
     index.html            the whole film, written in one pass: variables, scenes, one timeline
