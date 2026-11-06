@@ -115,12 +115,20 @@ def components(mask):
     return [(lab == i) & mask for i in range(1, n + 1)]
 
 
-def sharp(g):
-    g = g.astype(np.float32)
-    if min(g.shape) < 3:
-        return 0.0
-    lap = -4 * g[1:-1, 1:-1] + g[:-2, 1:-1] + g[2:, 1:-1] + g[1:-1, :-2] + g[1:-1, 2:]
-    return float(lap.var())
+def content(f):
+    """Pixels that differ from the frame's dominant (ground) level."""
+    bg = np.bincount(f.ravel(), minlength=256).argmax()
+    return np.abs(f - bg) > 20
+
+
+def dilate(m, r):
+    o = m.copy()
+    for k in range(1, r + 1):
+        o[k:] |= m[:-k]; o[:-k] |= m[k:]
+    p = o.copy()
+    for k in range(1, r + 1):
+        o[:, k:] |= p[:, :-k]; o[:, :-k] |= p[:, k:]
+    return o
 
 
 def measure(v, first, fps, rel=0.05):
@@ -159,23 +167,27 @@ def main():
     sx, sy = W / w, H / h  # analysis px -> source px
 
     # pass 1: per-cell change energy for every native frame
-    E, C, prev = [], [], None
+    E, C, K, prev, pc = [], [], [], None, None
     for f in frames(a.video, w, h):
         f = f.astype(np.int16)
+        cm = content(f)
         if prev is None:
-            E.append(np.zeros((gy, gx), np.float32)); C.append(0.0)
+            E.append(np.zeros((gy, gx), np.float32)); C.append(0.0); K.append(1.0)
         else:
             d = np.abs(f - prev); d[d < NOISE] = 0
             E.append(d.reshape(gy, CELL, gx, CELL).sum((1, 3)).astype(np.float32))
             C.append(float((d > 0).mean()))
-        prev = f
+            # share of the previous frame's content still near content now (a cut on a flat ground keeps ~none)
+            K.append(float((pc & dilate(cm, max(2, w // 64))).sum() / pc.sum()) if pc.sum() > 20 else 1.0)
+        prev, pc = f, cm
     E = np.array(E); C = np.array(C); N = len(E)
     if N < 3:
         sys.exit("video too short")
     tot = E.sum((1, 2)) / (w * h)
 
     # cuts: a one-frame spike over a large area
-    cuts = [i for i in range(1, N) if C[i] > 0.25 and tot[i] > 3 * max(tot[i - 1], tot[i + 1] if i + 1 < N else 0, 0.3)]
+    nb = lambda i: max(tot[i - 1], tot[i + 1] if i + 1 < N else 0, 0.05)
+    cuts = [i for i in range(1, N) if (C[i] > 0.25 and tot[i] > 3 * nb(i)) or (K[i] < 0.4 and tot[i] > 1.5 * nb(i))]
     E[cuts] = 0
     # per-cell threshold: ignore motion that runs all the time there (footage, loops)
     base = CELL * CELL * 2.0
