@@ -13,6 +13,7 @@ Bundled scripts do the mechanical work; use them instead of writing your own loo
 | --- | --- |
 | `<skill>/scripts/voice.py voice.txt` | every voiceover take in parallel → wav, `assets/voice/timings.json`, scene starts and the `const VO = {…};` line for cues; reruns also re-time the film (`references/voice-off.md`) |
 | `<skill>/scripts/images.py search` / `get` / `cut` / `sheet DIR` | image search as one line per hit, parallel download that rejects HTML pages, crop → webp; `sheet` = a local folder as labelled contact sheets to Read in one message |
+| `<skill>/scripts/motion.py ref.mp4 --out DIR` | a reference video measured at native fps: cuts, each move's elements with frames, stagger, speed peak, best-fit ease, overshoot, twos, and one strip of its native frames + onion skin per move (`references/style.md`) |
 | `<skill>/scripts/fonts.py "Family:700" "Family:italic:500"` | Google Fonts → `assets/fonts/*.woff2` + the `@font-face` lines to paste |
 | `<skill>/scripts/check.py` | `check` showing only what needs a decision (Work loop 5) |
 
