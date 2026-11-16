@@ -7,7 +7,7 @@ Only when the person asked for a voiceover. The voice is the clock: write the li
 What the voice says (hook, length, sounding human) belongs to the `video-script` skill: use it when installed, or the person's own script. Without either: as short as the idea allows, the first line already in the topic, no "Welcome to…" / "Introducing…". This section only turns those lines into takes.
 
 - One idea per scene, short lines. No silence between lines: the next voice starts as the last one ends.
-- Write each line as discrete cues ("first the snowball — then the hill — then the speed"), so each on-screen piece can land when the voice names it.
+- Write each line as discrete cues ("First the snowball. Then the hill. Then the speed."), so each on-screen piece can land when the voice names it.
 - Write what the voice must say: TTS reads literally. `10x` → "ten times", `$1.9T` → "nearly two trillion dollars", `API` → "A P I", `acme.com` → "acme dot com". The screen shows the exact figure.
 - Silent scenes are fine: leave them out of the script.
 - A script already written (pasted by the person, or from `video-script`): keep its words; only split it into scene-sized lines at sentence or clause boundaries.
@@ -27,7 +27,7 @@ Default model `google/gemini-3.8-flash-lite-tts` (2026, ≈ $0.01 per minute of 
 Write the lines to `voice.txt` in the film folder, one take per scene, `<scene-id> | <spoken text>`:
 
 ```
-s1 | First the snowball — then the hill — then the speed.
+s1 | First the snowball. Then the hill. Then the speed.
 s2 | Ten times faster than last year.
 ```
 
