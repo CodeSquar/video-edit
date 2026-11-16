@@ -1,6 +1,6 @@
 # Craft
 
-Measured detail for what `SKILL.md` names; it adds no rule of its own. A reference the person gave, or a beat that breaks a rule on purpose, wins.
+Measured detail for what `SKILL.md` names. A reference the person gave, or a beat that breaks a rule on purpose, wins.
 
 ## Story
 
@@ -33,7 +33,7 @@ Skip for edits, captions/overlays on footage, and single-idea pieces (one kineti
 | Split screen to one | several panes collapse into the one that matters |
 | One frame that rebuilds | a single composition keeps rearranging itself |
 
-**Beats** (launch ~35 s; scale it): Hook ~8% (the need, or the feature already working) → Tension ~12% (the old way failing on screen) → Reveal ~8% (product named, 20–30% in) → Proof ~40% (the real task as 3–6 verbs: paste, pick, watch it build, ship) → Payoff ~20% (the biggest moment, once, 60–80% in) → Claim ~8% (one line) → End card ~8% (mark carried in, name + CTA hold 2–3 s). In each verb beat keep only what the cursor touches and what proves the line.
+**Beats** (launch; shares of the film, whatever its length): Hook ~8% (the need, or the feature already working) → Tension ~12% (the old way failing on screen) → Reveal ~8% (product named, 20–30% in) → Proof ~40% (the real task as 3–6 verbs: paste, pick, watch it build, ship) → Payoff ~20% (the biggest moment, once, 60–80% in) → Claim ~8% (one line) → End card ~8% (mark carried in, name + CTA hold 2–3 s). In each verb beat keep only what the cursor touches and what proves the line.
 
 **Worlds:** several worlds with their own ground, light and scale — never one dark canvas with small UI floating. Enter each through an object on screen. Keep one home stage, one carrier the eye follows, palette and type constant.
 
@@ -81,10 +81,10 @@ Z rule: growing = push forward, shrinking = pull back. A shrinking exit answered
 
 ## Film types
 
-- **Launch/promo (20–45 s):** real UI, never a mockup — the person's recordings/screenshots, Figma frames, `capture`. Rebuild only the piece the beat uses at 1.6–2× real size (text ≥26 px after any push); never a small window in an empty canvas, never product UI tilted in 3D. Camera cycles window → pane → punch-in on one control (0.4–0.6 s moves, then hold while the UI acts). Containers morph instead of cutting. Cursor 4–7% of frame, enters from off-screen, its click causes the next thing on the same frame. End card: mark lands in the last 5–10%, lockup 15–30% of width, performed (clicked, carried, wiped) not faded; CTA holds 1.5–3 s.
-- **Explainer (30–90 s):** start where the viewer is (a person, a situation, a question); the device enters as the answer; return to the person at the end. One diagram that grows a part per beat, each part appearing when named; continuous morphs over cuts; one worked example. Labels sit on the part, no legends. End on the idea in one line.
+- **Launch/promo:** real UI, never a mockup — the person's recordings/screenshots, Figma frames, `capture`. Rebuild only the piece the beat uses at 1.6–2× real size (text ≥26 px after any push); never a small window in an empty canvas, never product UI tilted in 3D. Camera cycles window → pane → punch-in on one control (0.4–0.6 s moves, then hold while the UI acts). Containers morph instead of cutting. Cursor 4–7% of frame, enters from off-screen, its click causes the next thing on the same frame. End card: mark lands in the last 5–10%, lockup 15–30% of width, performed (clicked, carried, wiped) not faded; CTA holds 1.5–3 s.
+- **Explainer:** start where the viewer is (a person, a situation, a question); the device enters as the answer; return to the person at the end. One diagram that grows a part per beat, each part appearing when named; continuous morphs over cuts; one worked example. Labels sit on the part, no legends. End on the idea in one line.
 - **Data:** one number at a time, the biggest thing on screen, `font-variant-numeric: tabular-nums`, count-up 1.2–1.6 s then hold, source line on screen. Charts build in reading order: axis → reference line → data drawing in → one annotation on the point that matters. Highlight one series, grey the rest. Tells: KPI grids, dashboards, pies, everything counting at once.
-- **Vertical 9:16 (1080×1920):** recompose, don't squeeze. Safe box: `SKILL.md` Contract 10; frame 0: `SKILL.md` Story. Type ×1.35, ≤5 English words per claim line. Shots 1–2 s.
+- **Vertical 9:16 (1080×1920):** recompose, don't squeeze. Safe box: `SKILL.md` Contract 10; frame 0: `SKILL.md` Story. Type ×1.35, ≤5 words per claim line. Shots 1–2 s. One focal point per shot, stacked on the vertical axis: the text block above or below the hero, never beside it. With a voiceover the voice is the clock: cuts land on the start of the word that names the next thing, and each shot shows what the line is about (the real screen, object or number), not the spoken sentence as text. Hard cuts carry it.
 - **Music:** song sections are chapters (`npx hyperframes audio <track> --only sections,onsets,moments --json`). Slower shots in verses, one picture per strong beat in the chorus, held image on a breakdown. Each lyric line gets a picture of what it means (1.4–4 s). Tells: one treatment >6 s, a waveform as the main picture, cutting on every beat.
 - **Kinetic type:** 3–7 words per scene. Highlighter across lines: tween a custom property on a `background-size` band with `box-decoration-break: clone`.
 

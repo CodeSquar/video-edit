@@ -88,8 +88,8 @@ Copy only the ones you use into the film's `assets/sfx/`. Each effect syncs exac
 ## Work loop
 
 1. **Editing an existing film?** `npx hyperframes timeline --json` in that film shows what plays when (only here, never for a new film). Build on what is there.
-2. **Story** (anything over ~30 s that tells something): write **three storylines** in words only — each a different world, device and form (`references/craft.md` §Story). Recommend one first. If the person is there, stop until they pick; if they said "no stops", build your pick.
-3. **Spec** (new films over ~30 s; skip for edits and short pieces): write `SPEC.md` — every adjective turned into a number (template below). Build from it, check against it.
+2. **Story** (a film that tells something across several scenes; not a single-idea piece): write **three storylines** in words only — each a different world, device and form (`references/craft.md` §Story). Recommend one first. If the person is there, stop until they pick; if they said "no stops", build your pick.
+3. **Spec** (new films with several scenes; skip for edits and single-idea pieces): write `SPEC.md` — every adjective turned into a number (template below). Build from it, check against it.
 4. **Build**: write the whole first pass in `index.html`, then fix with `check` (it runs lint; no separate `lint`). Don't plan every coordinate up front. With a voiceover, scene starts and durations come straight from voice.py's table (`start`, `dur`, `vo`): copy them, don't recompute or parse `timings.json`. Paste its `const VO = {…};` line at the top of the script and write every voice-driven tween position as `VO.s2 + 1.46` (the word's time from the table), never as an absolute number, so a new take moves its cues on its own. Full-frame overlays (flash, wipe) start at `opacity: 0` in CSS, or `check` fails them. Repeated elements are a JS function or CSS class in the same file, not new files.
 5. **Check**: `python <skill>/scripts/check.py` in the film folder. It runs `npx hyperframes check` and prints every error in full, each warning kind once with up to 3 places, and only counts for infos and for the warnings one-file films raise on purpose (`nested_structure_needs_subcomposition`, `composition_file_too_large`, `timeline_track_too_dense`). Don't re-run `check` raw or re-filter it. `FAILED` = non-zero exit. Fix every error, weigh every warning (`line_unread`, `dead_stretch`, `text_below_floor`, `first_frame_empty`, `film_silent`). After fixes, re-check and re-snapshot in the same command: `python <skill>/scripts/check.py && npx hyperframes snapshot --at … | tail -1`.
 6. **Look** (new films only; skip for small edits or if the person says no review): `npx hyperframes snapshot --review 2>&1 | grep -i sheet` (scene starts/mids, every cut ±0.2 s, phone width) prints the paths of the contact sheets `review-beats-N.jpg` and `review-phone-N.jpg` (N = 1, 2… for long films; there is also a `review-seam-NN.jpg` per cut). Read all the beat and phone sheets in one message: that is how you see the video; open a seam sheet or a single PNG only to inspect a seam or detail. For one move: `snapshot --range A,B --frames 8`, `--at t1,t2` (`| tail -1` gives its `contact-sheet.jpg`), `keyframes --json --selector '#id'`. Then run the **Review** below.
@@ -112,7 +112,8 @@ Adjectives are where the default look hides. Every one you turn into a number is
 GOAL:    what the viewer feels or does at the end, one sentence
 STYLE:   video/styles/<name>/
 OUTPUT:  W x H, fps
-TIME:    seconds x fps = frames; BPM and frames-per-beat if music
+TIME:    from the voice table when there is a voiceover, else what the shots need, in frames;
+         BPM and frames-per-beat if music
 LOOK:    ground (hex + texture %), ink, ONE accent and where it may appear;
          display face + weight + px + tracking; body face the same;
          the medium (paper+ink, photographs, product UI, glass, clay, 3D) with numbers;
@@ -150,7 +151,7 @@ QA:      frames to check and what each must show
 - Arrive slow, leave clean: exits 40–50% shorter than entrances, one motion, never slide-stop-leave. Fast moves 0.3–0.6 s with motion blur.
 - Overlap: next element starts when the previous is 30–50% done. Stagger: letters 1 frame, words 60–120 ms, list items 40–80 ms.
 - **Vector law at cuts:** the exit decides the entry — same axis, same direction (on Z: same sign of scale change), matched speed via mirrored eases (`power4.in` out → `power4.out` in), cut mid-motion on both sides. Pick one dominant direction for the film; spend other directions only with a visible cause.
-- Every cut has a cause on screen: the clicked thing becomes the next shot. 3–5 transition kinds per film, ≤⅓ hard cuts between beats, worlds never crossfade. Catalog: `references/craft.md` §Transitions.
+- Every cut has a cause on screen: the clicked thing becomes the next shot, or the cut lands on the word that names it. The hard cut is the default. A built transition is spent only where a change of world or a causal hand-off earns it, in few kinds per film (the style's `motion.md` says which); a transition on every seam reads as a template. Worlds never crossfade. Catalog: `references/craft.md` §Transitions.
 - At most a 0.2 s beat before the payoff; the payoff plays at normal speed.
 - Pause the film at any second: something meaningful is mid-flight (a reveal landing, the camera travelling, the UI acting) — never idle wobble.
 
@@ -161,7 +162,7 @@ QA:      frames to check and what each must show
 - The brand mark lands once, with weight, on a built end card — never docked in a corner.
 - Copy bans: "Introducing" as the first line, "unlock", "seamless", "supercharge", "game-changer", "revolutionize", "effortless", unmeasured "in seconds".
 
-**Sound:** every film gets exact effects on visible actions (see Project); a film over ~15 s also gets a music bed. Loudness targets: Work loop 8. No music source → deliver with effects only and say so.
+**Sound:** effects go on the moves that matter (a shot's hero move, a hit, a reveal), each exact to its frame (see Project), not on every element that appears: the quiet between them is what lets one land. Music only when the person or the project supplies a track (this skill ships none); without one, deliver with effects only and say so. Loudness targets: Work loop 8.
 
 ## BANNED by default
 
@@ -181,11 +182,11 @@ Allowed only when the brand or the person's reference uses it, and only as they 
 - typing into a prompt box as the opener; the logo docked in a corner;
 - Inter / Space Grotesk / Instrument Serif / Geist / JetBrains Mono as the *default* choice (fine when the brand uses them); a system font or Impact/Arial Black as display.
 
-After each render, name every default it used anyway (listed or not), add it to `SPEC.md` BANNED (when there is one) and fix it. The list grows per film.
+After each render, name every default it used anyway (listed or not) and fix it. One that would come back in the next film is named in the delivery note as a candidate for the style's `Prohibido` list, the only place the next film will read it.
 
 ## Review (after `check` passes, before replying or rendering)
 
-Be a harsh motion director, not a proud author.
+Be a harsh motion director, not a proud author. An author is lenient with their own film: when you can launch a subagent, hand the review to a fresh one with only the contact sheets, the `SPEC.md` (or the script), this section and BANNED, never the code or your reasoning, and fix what it returns. Otherwise run it yourself:
 1. Describe each beat frame in one sentence as a stranger would, naming every object. An object you'd have to explain is a P0.
 2. Read the beat frames in order: does each cause the next? With the words covered, do the pictures still tell it? Compare each with its SHOT line.
 3. Check: subject/ground separation, one focal point, crops and edge text, collisions at seams, reads shorter than their words, pops with no move, jumps at cuts, everything on one curve, the BANNED list, legibility at 360 px.

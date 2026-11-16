@@ -140,7 +140,7 @@ Qué se mueve durante los holds y loops, o "nada".
 Hasta 8 reglas propias del estilo. BANNED de SKILL.md ya aplica: no lo repitas.
 
 ## Animatic
-15 s plano a plano con roles en vez de contenido: `0–1.5 s: [b-roll del tema] + título gancho con [marca] en caja`.
+Los primeros planos, uno por uno, con roles en vez de contenido: `0–1.5 s: [b-roll del tema] + título gancho con [marca] en caja`.
 ```
 
 
